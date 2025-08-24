@@ -1,0 +1,21 @@
+{
+  "name": "express-api-rest-gen",
+  "type": "module",
+  "bin": {
+    "express-api-rest-gen": "bin/index.js"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [
+    "express",
+    "api",
+    "rest",
+    "generator"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "A minimal CLI tool to generate a REST API with Express with JS or TS",
+  "dependencies": {
+    "inquirer": "^12.9.3"
+  }
+}
