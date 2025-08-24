@@ -2,6 +2,7 @@ import inquirer from "inquirer";
 import path from "path";
 import fs from "fs";
 import { execSync } from "child_process";
+import chalk from "chalk";
 
 // local imports
 import {
@@ -34,12 +35,14 @@ export async function promptUser() {
 
 export function installDependenciesAndConfigureTSConfig(projectPath, language) {
   execSync("npm init -y", { cwd: projectPath });
+  console.log(chalk.green("Instalando dependencias..."));
   execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
   });
   execSync(`npm install --save-dev ${DEV_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
   });
+  console.log(chalk.blue("Dependencias instaladas."));
 
   if (language === "TypeScript") {
     execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
@@ -49,23 +52,28 @@ export function installDependenciesAndConfigureTSConfig(projectPath, language) {
       "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
       { cwd: projectPath }
     );
+    console.log(chalk.blue("TypeScript configurado."));
   }
 }
 
 export function createSourceFiles(projectPath, language) {
+  console.log(chalk.green("Creando archivos fuente..."));
   const ext = language === "TypeScript" ? "ts" : "js";
   fs.writeFileSync(path.join(projectPath, `src/app.${ext}`), getAppTemplate());
   fs.writeFileSync(
     path.join(projectPath, `src/index.${ext}`),
     getIndexTemplate(language)
   );
+  console.log(chalk.blue("Archivos fuente creados."));
 }
 
 export function updatePackage(projectPath, language) {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+  console.log(chalk.green("Creando scripts en package.json..."));
   fs.writeFileSync(
     packageJsonPath,
     JSON.stringify(updatePackageJson(pkg, language), null, 2)
   );
+  console.log(chalk.blue("Scripts en package.json creados."));
 }

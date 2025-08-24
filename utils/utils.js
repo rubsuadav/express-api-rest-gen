@@ -1,18 +1,21 @@
 import fs from "fs";
 import path from "path";
+import chalk from "chalk";
 
 export function checkProjectExists(projectPath, projectName) {
   if (fs.existsSync(projectPath)) {
-    console.log(`El proyecto ${projectName} ya existe.`);
+    console.log(chalk.red(`El proyecto ${projectName} ya existe.`));
     return true;
   }
   return false;
 }
 
 export function createFolders(basePath, folders) {
-  folders.forEach((folder) =>
-    fs.mkdirSync(path.join(basePath, folder), { recursive: true })
-  );
+  folders.forEach((folder) => {
+    console.log(chalk.green(`Creando carpeta: ${folder}`));
+    fs.mkdirSync(path.join(basePath, folder), { recursive: true });
+  });
+  console.log(chalk.blue("Carpetas creadas con éxito."));
 }
 
 export function getAppTemplate() {
@@ -53,6 +56,5 @@ export function updatePackageJson(pkg, language) {
     };
     pkg.type = "module";
   }
-
   return pkg;
 }
