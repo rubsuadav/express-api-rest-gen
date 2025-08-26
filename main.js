@@ -30,6 +30,13 @@ export async function promptUser() {
       choices: ["JavaScript", "TypeScript"],
       default: "JavaScript",
     },
+    {
+      type: "list",
+      name: "database",
+      message: "¿Qué base de datos quieres usar?",
+      choices: ["MongoDB", "PostgreSQL", "MySQL"],
+      default: "MongoDB",
+    },
   ]);
 }
 
