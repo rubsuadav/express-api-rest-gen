@@ -4,15 +4,24 @@ import path from "path";
 import { execSync } from "child_process";
 
 //local imports
-import { getMongoDBTemplate } from "./utils.js";
+import { getMongoDBTemplate, getPostgreSQLTemplate } from "./utils.js";
 
 export function connectDatabase(projectPath, database, language) {
   const ext = language === "TypeScript" ? "ts" : "js";
-  //change to DDBB type
-  fs.writeFileSync(
-    path.join(projectPath, `.env`),
-    "MONGODB_URI=mongodb://127.0.0.1:27017/\nDB_NAME=yourDBNAME"
-  );
+  switch (database) {
+    case "MongoDB":
+      fs.writeFileSync(
+        path.join(projectPath, `.env`),
+        "MONGODB_URI=mongodb://127.0.0.1:27017/\nDB_NAME=yourDBNAME"
+      );
+      break;
+    case "PostgreSQL":
+      fs.writeFileSync(
+        path.join(projectPath, `.env`),
+        "PG_URI=postgres://user:password@host:port/yourDBNAME"
+      );
+      break;
+  }
   //
   fs.writeFileSync(
     path.join(projectPath, `database.${ext}`),
@@ -28,9 +37,9 @@ function getDatabaseTemplate(projectPath, database, language) {
       execSync(`npm i mongoose`, { cwd: projectPath });
       return getMongoDBTemplate(language);
     case "PostgreSQL":
-      //TODO
-      console.log(`Seleccionado ${database}`);
-      return "";
+      console.log(chalk.green("Instalando librerias de PostgreSQL..."));
+      execSync(`npm i pg pg-hstore sequelize`, { cwd: projectPath });
+      return getPostgreSQLTemplate(language);
     case "MySQL":
       //TODO
       console.log(`Seleccionado ${database}`);
