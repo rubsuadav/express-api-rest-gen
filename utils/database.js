@@ -4,7 +4,8 @@ import path from "path";
 import { execSync } from "child_process";
 
 //local imports
-import { getMongoDBTemplate, getPostgreSQLTemplate } from "./utils.js";
+import { getMongoDBTemplate, getSQLTemplate } from "./utils.js";
+import { SQLURI } from "./constants.js";
 
 export function connectDatabase(projectPath, database, language) {
   const ext = language === "TypeScript" ? "ts" : "js";
@@ -16,13 +17,12 @@ export function connectDatabase(projectPath, database, language) {
       );
       break;
     case "PostgreSQL":
-      fs.writeFileSync(
-        path.join(projectPath, `.env`),
-        "PG_URI=postgres://user:password@host:port/yourDBNAME"
-      );
+      fs.writeFileSync(path.join(projectPath, `.env`), `URI=postgres${SQLURI}`);
+      break;
+    case "MySQL":
+      fs.writeFileSync(path.join(projectPath, `.env`), `URI=mysql${SQLURI}`);
       break;
   }
-  //
   fs.writeFileSync(
     path.join(projectPath, `database.${ext}`),
     getDatabaseTemplate(projectPath, database, language)
@@ -37,13 +37,15 @@ function getDatabaseTemplate(projectPath, database, language) {
       execSync(`npm i mongoose`, { cwd: projectPath });
       return getMongoDBTemplate(language);
     case "PostgreSQL":
-      console.log(chalk.green("Instalando librerias de PostgreSQL..."));
+      console.log(
+        chalk.green("Instalando driver de PostgreSQL y ORM sequelize...")
+      );
       execSync(`npm i pg pg-hstore sequelize`, { cwd: projectPath });
-      return getPostgreSQLTemplate(language);
+      return getSQLTemplate(language);
     case "MySQL":
-      //TODO
-      console.log(`Seleccionado ${database}`);
-      return "";
+      console.log(chalk.green("Instalando driver de MySQL y ORM sequelize..."));
+      execSync(`npm i mysql2 sequelize`, { cwd: projectPath });
+      return getSQLTemplate(language);
     default:
       return "";
   }

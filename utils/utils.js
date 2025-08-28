@@ -92,19 +92,18 @@ export function getMongoDBTemplate(language) {
     }`;
 }
 
-export function getPostgreSQLTemplate(language) {
-  console.log(chalk.green("Generando plantilla de conexión a PostgreSQL..."));
+export function getSQLTemplate(language) {
+  console.log(chalk.green("Generando plantilla de conexión..."));
   return language === "TypeScript"
     ? `
     import { Sequelize } from 'sequelize';
     import 'dotenv/config';
 
-    const sequelize = new Sequelize(process.env.PG_URI as string);
+    const sequelize = new Sequelize(process.env.URI as string);
 
     export async function connectToDatabase(): Promise<void> {
       try {
         await sequelize.authenticate();
-        console.log('PostgreSQL conectado');
       } catch (error) {
         console.error('No se puede conectar a la base de datos');
       }
@@ -113,12 +112,11 @@ export function getPostgreSQLTemplate(language) {
     import { Sequelize } from 'sequelize';
     import 'dotenv/config';
 
-    const sequelize = new Sequelize(process.env.PG_URI);
+    const sequelize = new Sequelize(process.env.URI);
 
     export async function connectToDatabase() {
       try {
         await sequelize.authenticate();
-        console.log('PostgreSQL conectado');
       } catch (error) {
         console.error('No se puede conectar a la base de datos');
       }

@@ -18,3 +18,5 @@ export const TS_DEPENDENCIES = [
   "@types/cors",
   "@types/morgan",
 ];
+
+export const SQLURI = "://user:password@host:port/yourDBNAME";
