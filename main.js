@@ -20,7 +20,9 @@ export function handleVersionFlag() {
   const args = process.argv.slice(2);
   const actual = execSync("npm list -g express-api-rest-gen", {
     encoding: "utf-8",
-  }).trim();
+  })
+    .trim()
+    .match(/express-api-rest-gen@([\d.]+)/)[1]; // Extract version using regex
   const latest = execSync("npm view express-api-rest-gen version", {
     encoding: "utf-8",
   }).trim();
