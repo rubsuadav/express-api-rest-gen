@@ -12,9 +12,10 @@ import {
 import { FOLDERS } from "../utils/constants.js";
 import { checkProjectExists, createFolders } from "../utils/utils.js";
 import { connectDatabase } from "../utils/database.js";
+import { configureTesting } from "../utils/testing.js";
 
 async function generateProject() {
-  const { projectName, language, database } = await promptUser();
+  const { projectName, language, database, testing } = await promptUser();
   const projectPath = path.join(process.cwd(), projectName);
 
   if (checkProjectExists(projectPath, projectName)) return;
@@ -24,6 +25,7 @@ async function generateProject() {
   installDependenciesAndConfigureTSConfig(projectPath, language);
   updatePackage(projectPath, language);
   connectDatabase(projectPath, database, language);
+  testing === "Yes" ? configureTesting(projectPath, language) : null;
   console.log(
     `API ${projectName} con Express y con (${language}) generada con éxito en http://localhost:3000`
   );

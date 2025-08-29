@@ -37,6 +37,13 @@ export async function promptUser() {
       choices: ["MongoDB", "PostgreSQL", "MySQL"],
       default: "MongoDB",
     },
+    {
+      type: "list",
+      name: "testing",
+      message: "¿Quieres configurar los tests de backend?",
+      choices: ["Yes", "No"],
+      default: "Yes",
+    }
   ]);
 }
 
