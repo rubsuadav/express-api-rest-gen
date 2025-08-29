@@ -20,3 +20,5 @@ export const TS_DEPENDENCIES = [
 ];
 
 export const SQLURI = "://user:password@host:port/yourDBNAME";
+export const TEST_CONFIG =
+  "node --experimental-vm-modules node_modules/jest/bin/jest.js";

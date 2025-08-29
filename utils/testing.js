@@ -3,17 +3,18 @@ import chalk from "chalk";
 import path from "path";
 import fs from "fs";
 
+//local imports
+import { TEST_CONFIG } from "./constants.js";
+
 export function configureTesting(projectPath, language) {
-  const ext = language === "TypeScript" ? "ts" : "js";
   console.log(
-    chalk.green("Instalando dependencias necesarias (jest y supertest)...")
+    chalk.green(
+      "Instalando dependencias necesarias de test (jest y supertest)..."
+    )
   );
   execSync("npm i -D jest supertest", {
     cwd: projectPath,
   });
-  if (language === "JavaScript") {
-    //TODO, CONFIGURA JEST FOR USING ECMASCRIPT MODULES
-  }
   if (language === "TypeScript") {
     execSync(
       "npm i -D ts-jest @types/jest @types/supertest && npx ts-jest config:init",
@@ -24,7 +25,7 @@ export function configureTesting(projectPath, language) {
     updateTsConfig(projectPath);
   }
   console.log(chalk.blue("Dependencias instaladas."));
-  updateTestScripts(projectPath);
+  updateTestScripts(projectPath, language);
   console.log(chalk.blue("Scripts en package.json creados."));
 }
 
@@ -35,15 +36,19 @@ function updateTsConfig(projectPath) {
   fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 }
 
-function updateTestScripts(projectPath) {
+function updateTestScripts(projectPath, language) {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
   console.log(chalk.yellow("Creando scripts de testing en package.json..."));
   pkg.scripts = {
     ...pkg.scripts,
-    test: "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    test: language === "TypeScript" ? "jest" : `${TEST_CONFIG}`,
+    "test:watch":
+      language === "TypeScript" ? "jest --watch" : `${TEST_CONFIG} --watch`,
+    "test:coverage":
+      language === "TypeScript"
+        ? "jest --coverage"
+        : `${TEST_CONFIG} --coverage`,
   };
   fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
 }
