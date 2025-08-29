@@ -31,7 +31,13 @@ export function configureTesting(projectPath, language) {
 
 function updateTsConfig(projectPath) {
   const tsconfigPath = path.join(projectPath, "tsconfig.json");
-  const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf-8"));
+  const tsconfig = JSON.parse(
+    fs
+      .readFileSync(tsconfigPath, "utf-8")
+      .replace(/\/\/.*$/gm, "") // drop single-line comments
+      .replace(/\/\*[\s\S]*?\*\//g, "") // drop multi-line comments
+      .replace(/,\s*([}\]])/g, "$1") // drop trailing commas
+  );
   tsconfig.compilerOptions.types.push("jest");
   fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 }
