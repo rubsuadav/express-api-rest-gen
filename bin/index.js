@@ -5,6 +5,7 @@ import path from "path";
 // local imports
 import {
   createSourceFiles,
+  handleVersionFlag,
   installDependenciesAndConfigureTSConfig,
   promptUser,
   updatePackage,
@@ -32,6 +33,7 @@ async function generateProject() {
 }
 
 async function main() {
+  handleVersionFlag();
   try {
     await generateProject();
   } catch (error) {
