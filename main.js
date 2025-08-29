@@ -21,15 +21,16 @@ export function handleVersionFlag() {
   const require = createRequire(import.meta.url);
   const pkg = require("./package.json");
   const args = process.argv.slice(2);
+  const latest = execSync("npm view express-api-rest-gen version", {
+    encoding: "utf-8",
+  }).trim();
+  if (latest !== pkg.version) {
+    console.log(`A new version (${latest}) is available! Update with:`);
+    console.log("npm i -g express-api-rest-gen");
+    process.exit(0);
+  }
   if (args.includes("--version") || args.includes("-v")) {
     console.log(`express-api-rest-gen version: ${pkg.version}`);
-    const latest = execSync("npm view express-api-rest-gen version", {
-      encoding: "utf-8",
-    }).trim();
-    if (latest !== pkg.version) {
-      console.log(`A new version (${latest}) is available! Update with:`);
-      console.log("npm i -g express-api-rest-gen");
-    }
     process.exit(0);
   }
 }
