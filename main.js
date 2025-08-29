@@ -3,7 +3,6 @@ import path from "path";
 import fs from "fs";
 import { execSync } from "child_process";
 import chalk from "chalk";
-import { createRequire } from "module";
 
 // local imports
 import {
@@ -18,19 +17,20 @@ import {
 } from "./utils/utils.js";
 
 export function handleVersionFlag() {
-  const require = createRequire(import.meta.url);
-  const pkg = require("./package.json");
   const args = process.argv.slice(2);
+  const actual = execSync("npm list -g express-api-rest-gen", {
+    encoding: "utf-8",
+  }).trim();
   const latest = execSync("npm view express-api-rest-gen version", {
     encoding: "utf-8",
   }).trim();
-  if (latest !== pkg.version) {
-    console.log(`A new version (${latest}) is available! Update with:`);
-    console.log("npm i -g express-api-rest-gen");
+  if (args.includes("--version") || args.includes("-v")) {
+    console.log(`express-api-rest-gen version: ${actual}`);
     process.exit(0);
   }
-  if (args.includes("--version") || args.includes("-v")) {
-    console.log(`express-api-rest-gen version: ${pkg.version}`);
+  if (latest !== actual) {
+    console.log(`A new version (${latest}) is available! Update with:`);
+    console.log("npm i -g express-api-rest-gen");
     process.exit(0);
   }
 }
