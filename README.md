@@ -20,4 +20,4 @@ Luego, sigue los pasos interactivos de la CLI para configurar tu API REST.
 
 ---
 
-**¡Listo! Así de fácil generas tu API REST
+**¡Listo!** Así de fácil generas tu API REST
