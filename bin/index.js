@@ -10,6 +10,7 @@ import {
   installDependenciesAndConfigureTSConfig,
   promptUser,
   updatePackage,
+  getAvailableCommands,
 } from "../main.js";
 import { FOLDERS } from "../utils/constants.js";
 import { checkProjectExists, createFolders } from "../utils/utils.js";
@@ -33,6 +34,15 @@ async function generateProject() {
       `API ${projectName} con Express y con (${language}) generada con éxito`,
     ),
   );
+  console.log(
+    chalk.blue(`Para empezar a trabajar en tu API REST, sigue estos pasos:`),
+  );
+  console.log(chalk.blue(`1. cd ${projectName}`));
+  console.log(chalk.blue(`2. npm run dev`));
+  console.log(
+    chalk.blue(`Tu servidor estará corriendo en http://localhost:3000`),
+  );
+  getAvailableCommands(projectPath);
 }
 
 async function main() {
@@ -40,6 +50,7 @@ async function main() {
   try {
     await generateProject();
   } catch (error) {
+    console.error(chalk.red("Error al generar el proyecto:", error));
     process.exit(1);
   }
 }
