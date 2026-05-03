@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          
+
           echo "=== DEBUG: Starting version calculation ==="
           echo "Available tags in repository:"
           git tag --list 'v*.*.*' --sort=-v:refname || true
@@ -96,7 +96,7 @@ jobs:
           # Check for features (FEATURES => MAJOR in this repo policy)
           if [[ "$BUMP" == "patch" ]]; then
             for subject in "${SUBJECTS[@]}"; do
-              if [[ "$subject" =~ ^feat(\(.+\))?: ]]; then
+              if [[ "$subject" =~ ^feat(\(.+\))?: ]] || [[ "$subject" =~ ^feature(\(.+\))?: ]] || [[ "$subject" =~ ^add(\(.+\))?: ]]; then
                 BUMP="major"
                 break
               fi
@@ -126,7 +126,7 @@ jobs:
               NEXT_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
               ;;
           esac
-          
+
           echo "Bump type: $BUMP"
           echo "Base version from latest tag: $BASE_VERSION"
           echo "Calculated next version: $NEXT_VERSION"
@@ -148,12 +148,12 @@ jobs:
             RESOLVED_VERSION="$C_MAJOR.$C_MINOR.$((C_PATCH + 1))"
             ATTEMPT=$((ATTEMPT + 1))
           done
-          
+
           if [[ $ATTEMPT -ge $MAX_ATTEMPTS ]]; then
             echo "ERROR: Could not find available version after $MAX_ATTEMPTS attempts"
             exit 1
           fi
-          
+
           echo "Final resolved version: v$RESOLVED_VERSION"
           echo ""
 
@@ -194,20 +194,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          
+
           TAG="${{ steps.semver.outputs.tag }}"
           VERSION="${{ steps.semver.outputs.version }}"
-          
+
           # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Create annotated tag
           git tag -a "$TAG" -m "Release $VERSION"
-          
+
           # Push tag
           git push origin "$TAG"
-          
+
           echo "Tag $TAG created and pushed successfully"
 
       - name: Create GitHub release
