@@ -93,10 +93,20 @@ jobs:
             done
           fi
 
-          # Check for features (MINOR)
+          # Check for features (FEATURES => MAJOR in this repo policy)
           if [[ "$BUMP" == "patch" ]]; then
             for subject in "${SUBJECTS[@]}"; do
               if [[ "$subject" =~ ^feat(\(.+\))?: ]]; then
+                BUMP="major"
+                break
+              fi
+            done
+          fi
+
+          # Check for enhancements/perf (MINOR)
+          if [[ "$BUMP" == "patch" ]]; then
+            for subject in "${SUBJECTS[@]}"; do
+              if [[ "$subject" =~ ^perf(\(.+\))?: ]] || [[ "$subject" =~ ^enhance(ment)?(\(.+\))?: ]]; then
                 BUMP="minor"
                 break
               fi
