@@ -30,7 +30,7 @@ async function generateProject() {
   testing === "Yes" ? configureTesting(projectPath, language) : null;
   console.log(
     chalk.green(
-      `API ${projectName} con Express y con (${language}) generada con éxito en http://localhost:3000`,
+      `API ${projectName} con Express y con (${language}) generada con éxito`,
     ),
   );
 }
