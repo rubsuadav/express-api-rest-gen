@@ -10,6 +10,7 @@ import {
   installDependenciesAndConfigureTSConfig,
   promptUser,
   updatePackage,
+  getAvailableCommands,
 } from "../main.js";
 import { FOLDERS } from "../utils/constants.js";
 import { checkProjectExists, createFolders } from "../utils/utils.js";
@@ -33,6 +34,8 @@ async function generateProject() {
       `API ${projectName} con Express y con (${language}) generada con éxito`,
     ),
   );
+  console.log(chalk.blue(`Entra a tu proyecto con: cd ${projectName}`));
+  getAvailableCommands(projectPath);
 }
 
 async function main() {
@@ -40,6 +43,7 @@ async function main() {
   try {
     await generateProject();
   } catch (error) {
+    console.error(chalk.red("Error generating project:"), error);
     process.exit(1);
   }
 }

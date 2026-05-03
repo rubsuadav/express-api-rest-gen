@@ -112,3 +112,14 @@ export function updatePackage(projectPath, language) {
   );
   console.log(chalk.blue("Scripts en package.json creados."));
 }
+
+export function getAvailableCommands(projectPath) {
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(projectPath, "package.json"), "utf-8")
+  );
+  const scripts = packageJson.scripts;
+  console.log(chalk.blue(`Comandos disponibles:`));
+  Object.keys(scripts).forEach((script) => {
+    console.log(chalk.blue(`- npm run ${script}: ${scripts[script]}`));
+  });
+}
