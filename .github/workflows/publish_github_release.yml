@@ -116,13 +116,6 @@ jobs:
 
           echo "Generated tag: v$NEXT_VERSION (bump: $BUMP)"
 
-      - name: Sync package.json version with calculated version
-        if: steps.semver.outputs.has_changes == 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm version "${{ steps.semver.outputs.version }}" --no-git-tag-version
-
       - name: Build release notes from commit messages
         if: steps.semver.outputs.has_changes == 'true'
         id: notes
