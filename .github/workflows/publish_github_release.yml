@@ -20,11 +20,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: "22"
+          node-version: 22
 
       - name: Install dependencies
         shell: bash
-        run: npm install
+        run: npm ci
 
       - name: Validate tag and calculate bump from commits
         id: semver
