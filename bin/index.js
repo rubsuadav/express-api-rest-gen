@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import path from "path";
+import chalk from "chalk";
 
 // local imports
 import {
@@ -28,7 +29,9 @@ async function generateProject() {
   connectDatabase(projectPath, database, language);
   testing === "Yes" ? configureTesting(projectPath, language) : null;
   console.log(
-    `API ${projectName} con Express y con (${language}) generada con éxito en http://localhost:3000`
+    chalk.green(
+      `API ${projectName} con Express y con (${language}) generada con éxito en http://localhost:3000`,
+    ),
   );
 }
 
