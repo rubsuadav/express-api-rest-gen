@@ -1,0 +1,148 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+# Ensure only one publish workflow runs at a time for a given tag, but allow multiple tags to be published concurrently
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        shell: bash
+        run: npm install
+
+      - name: Validate tag and calculate bump from commits
+        id: semver
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CURRENT_TAG="${GITHUB_REF_NAME}"
+          CURRENT_VERSION="${CURRENT_TAG#v}"
+
+          if [[ ! "$CURRENT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$CURRENT_TAG' does not match required format vX.Y.Z"
+            exit 1
+          fi
+
+          PREVIOUS_TAG="$(git tag --list 'v*.*.*' --sort=-v:refname | grep -vx "$CURRENT_TAG" | head -n1 || true)"
+
+          if [[ -n "$PREVIOUS_TAG" ]]; then
+            RANGE="$PREVIOUS_TAG..$CURRENT_TAG"
+            BASE_VERSION="${PREVIOUS_TAG#v}"
+          else
+            RANGE="$CURRENT_TAG"
+            BASE_VERSION="0.0.0"
+          fi
+
+          mapfile -t SUBJECTS < <(git log "$RANGE" --format=%s)
+          mapfile -t BODIES < <(git log "$RANGE" --format=%B)
+
+          if [[ ${#SUBJECTS[@]} -eq 0 ]]; then
+            echo "No commits found in range '$RANGE'"
+            exit 1
+          fi
+
+          BUMP="patch"
+
+          for subject in "${SUBJECTS[@]}"; do
+            if [[ "$subject" =~ ^[a-zA-Z]+(\(.+\))?!: ]]; then
+              BUMP="major"
+              break
+            fi
+          done
+
+          if [[ "$BUMP" != "major" ]]; then
+            for body in "${BODIES[@]}"; do
+              if [[ "$body" == *"BREAKING CHANGE:"* || "$body" == *"BREAKING-CHANGE:"* ]]; then
+                BUMP="major"
+                break
+              fi
+            done
+          fi
+
+          if [[ "$BUMP" == "patch" ]]; then
+            for subject in "${SUBJECTS[@]}"; do
+              if [[ "$subject" =~ ^feat(\(.+\))?: ]]; then
+                BUMP="minor"
+                break
+              fi
+            done
+          fi
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
+          case "$BUMP" in
+            major)
+              EXPECTED_VERSION="$((MAJOR + 1)).0.0"
+              ;;
+            minor)
+              EXPECTED_VERSION="$MAJOR.$((MINOR + 1)).0"
+              ;;
+            patch)
+              EXPECTED_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+              ;;
+          esac
+
+          if [[ "$CURRENT_VERSION" != "$EXPECTED_VERSION" ]]; then
+            echo "Tag version '$CURRENT_VERSION' does not match computed '$EXPECTED_VERSION' ($BUMP bump from commits)."
+            echo "Fix your tag or commit messages and push again."
+            exit 1
+          fi
+
+          {
+            echo "previous_tag=$PREVIOUS_TAG"
+            echo "range=$RANGE"
+            echo "bump=$BUMP"
+            echo "version=$CURRENT_VERSION"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Sync package.json version with tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm version "${{ steps.semver.outputs.version }}" --no-git-tag-version
+
+      - name: Build release notes from commit messages
+        id: notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RANGE="${{ steps.semver.outputs.range }}"
+          VERSION="${{ steps.semver.outputs.version }}"
+
+          {
+            echo "# v$VERSION"
+            echo
+            echo "Bump detected: **${{ steps.semver.outputs.bump }}**"
+            echo
+            echo "## Changes"
+            git log "$RANGE" --format='- %s (%h)'
+          } > RELEASE_NOTES.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
