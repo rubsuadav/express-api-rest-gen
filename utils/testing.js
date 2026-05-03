@@ -4,7 +4,11 @@ import path from "path";
 import fs from "fs";
 
 //local imports
-import { TEST_CONFIG } from "./constants.js";
+import {
+  TEST_CONFIG,
+  TEST_DEPENDENCIES,
+  TEST_TS_DEPENDENCIES,
+} from "./constants.js";
 
 export function configureTesting(projectPath, language) {
   console.log(
@@ -12,15 +16,15 @@ export function configureTesting(projectPath, language) {
       "Instalando dependencias necesarias de test (jest y supertest)..."
     )
   );
-  execSync("npm i -D jest supertest", {
+  execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
   });
   if (language === "TypeScript") {
     execSync(
-      "npm i -D ts-jest @types/jest @types/supertest && npx ts-jest config:init",
+      `npm i -D ${TEST_TS_DEPENDENCIES.join(" ")}  && npx ts-jest config:init"`,
       {
         cwd: projectPath,
-      }
+      },
     );
     updateTsConfig(projectPath);
   }
