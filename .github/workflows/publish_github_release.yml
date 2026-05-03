@@ -1,9 +1,6 @@
 name: Publish Release
 
-on:
-  push:
-    tags:
-      - "v*.*.*"
+on: [push]
 
 permissions:
   contents: write
@@ -144,5 +141,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           body_path: RELEASE_NOTES.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
