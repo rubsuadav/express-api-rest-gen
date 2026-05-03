@@ -114,7 +114,6 @@ export function updatePackage(projectPath, language) {
 }
 
 export function getAvailableCommands(projectPath) {
-  console.log(chalk.blue(`Comandos disponibles:`));
   const packageJson = JSON.parse(
     fs.readFileSync(path.join(projectPath, "package.json"), "utf-8")
   );
