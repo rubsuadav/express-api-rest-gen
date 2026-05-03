@@ -15,7 +15,16 @@
     "rest",
     "generator"
   ],
-  "author": "",
+  "repository": {
+    "url": "https://github.com/rubsuadav/express-api-rest-gen",
+    "type": "git"
+  },
+  "homepage": "https://github.com/rubsuadav/express-api-rest-gen",
+  "author": "rubsuadav",
+  "engines": {
+    "node": ">=22.14.0",
+    "npm": ">=10.9.2"
+  },
   "license": "ISC",
   "description": "A minimal CLI tool to generate a REST API with Express with JS or TS",
   "dependencies": {
