@@ -1,6 +1,9 @@
 {
   "name": "express-api-rest-gen",
   "type": "module",
+  "scripts": {
+    "start": "node bin/index.js"
+  },
   "bin": {
     "express-api-rest-gen": "bin/index.js"
   },
