@@ -19,6 +19,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all tags from remote
+        shell: bash
+        run: git fetch --force --tags origin
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -34,9 +40,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          
+          echo "=== DEBUG: Starting version calculation ==="
+          echo "Available tags in repository:"
+          git tag --list 'v*.*.*' --sort=-v:refname || true
+          echo ""
 
           # Get the latest tag
           PREVIOUS_TAG="$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1 || true)"
+          echo "Latest tag found: $PREVIOUS_TAG"
 
           # Determine the commit range for analysis
           if [[ -n "$PREVIOUS_TAG" ]]; then
@@ -104,13 +116,36 @@ jobs:
               NEXT_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
               ;;
           esac
+          
+          echo "Bump type: $BUMP"
+          echo "Base version from latest tag: $BASE_VERSION"
+          echo "Calculated next version: $NEXT_VERSION"
+          echo ""
 
-          # If calculated tag already exists, keep incrementing patch until a free tag is found
+          # If calculated tag already exists locally, keep incrementing patch until a free tag is found
           RESOLVED_VERSION="$NEXT_VERSION"
-          while git show-ref --tags --verify --quiet "refs/tags/v$RESOLVED_VERSION"; do
+          ATTEMPT=0
+          MAX_ATTEMPTS=100
+          while [[ $ATTEMPT -lt $MAX_ATTEMPTS ]]; do
+            if ! git rev-parse "v$RESOLVED_VERSION" >/dev/null 2>&1; then
+              # Tag does not exist, we can use this version
+              echo "Tag v$RESOLVED_VERSION is available (attempt $ATTEMPT)"
+              break
+            fi
+            # Tag exists, increment patch and try again
+            echo "Tag v$RESOLVED_VERSION already exists, trying next patch..."
             IFS='.' read -r C_MAJOR C_MINOR C_PATCH <<< "$RESOLVED_VERSION"
             RESOLVED_VERSION="$C_MAJOR.$C_MINOR.$((C_PATCH + 1))"
+            ATTEMPT=$((ATTEMPT + 1))
           done
+          
+          if [[ $ATTEMPT -ge $MAX_ATTEMPTS ]]; then
+            echo "ERROR: Could not find available version after $MAX_ATTEMPTS attempts"
+            exit 1
+          fi
+          
+          echo "Final resolved version: v$RESOLVED_VERSION"
+          echo ""
 
           # Output the results
           {
