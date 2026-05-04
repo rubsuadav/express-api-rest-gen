@@ -17,11 +17,11 @@
 ## 📋 Table of Contents
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
 
+<a id="installation"></a>
 ## 📦 Installation
 
 ### Global Installation
@@ -33,6 +33,7 @@ npm i -g express-api-rest-gen
 - Node.js 22.0.0 or higher
 - npm 10.0.0 or higher
 
+<a id="quick-start"></a>
 ## 🚀 Quick Start
 
 1. Navigate to your desired directory
@@ -59,7 +60,8 @@ cd your-project-name
 npm start
 ```
 
-## ⚙️ Generated Project Structure
+<a id="project-structure"></a>
+## 📁 Project Structure
 ```
 your-project-name/
 ├── src/
@@ -80,6 +82,7 @@ your-project-name/
 └── tsconfig.json (if TypeScript selected)
 ```
 
+<a id="contributing"></a>
 ## 🤝 Contributing
 Contributions are welcome! Please feel free to:
 
@@ -94,5 +97,6 @@ cd express-api-rest-gen
 npm i
 ```
 
+<a id="license"></a>
 ## 📄 License
 This project is licensed under the ISC License - see the LICENSE file for details.
