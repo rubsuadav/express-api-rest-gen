@@ -27,11 +27,13 @@ export function handleVersionFlag() {
     encoding: "utf-8",
   }).trim();
   if (args.includes("--version") || args.includes("-v")) {
-    console.log(`express-api-rest-gen version: ${actual}`);
+    console.log(chalk.blue(`Current version: ${actual}`));
     process.exit(0);
   }
   if (latest !== actual) {
-    console.log(`A new version (${latest}) is available! Update with:`);
+    console.log(
+      chalk.yellow(`A new version (${latest}) is available! Update with:`)
+    );
     console.log("npm i -g express-api-rest-gen");
     process.exit(0);
   }
