@@ -1,5 +1,5 @@
 # express-api-rest-gen
-[![npm version](https://badge.fury.io/js/express-api-rest-gen.svg)](https://www.npmjs.com/package/express-api-rest-gen)
+[![npm version](https://img.shields.io/npm/v/express-api-rest-gen.svg)](https://www.npmjs.com/package/express-api-rest-gen)
 [![npm downloads](https://img.shields.io/npm/dm/express-api-rest-gen.svg)](https://www.npmjs.com/package/express-api-rest-gen)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Last Commit](https://img.shields.io/github/last-commit/rubsuadav/express-api-rest-gen.svg)](https://github.com/rubsuadav/express-api-rest-gen/commits)
