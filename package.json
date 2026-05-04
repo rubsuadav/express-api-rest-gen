@@ -16,7 +16,7 @@
     "generator"
   ],
   "files": [
-    "!.github/"
+    "!.github/*"
   ],
   "repository": {
     "url": "https://github.com/rubsuadav/express-api-rest-gen",
