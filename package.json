@@ -8,7 +8,7 @@
     "express-api-rest-gen": "bin/index.js"
   },
   "version": "4.1.1",
-  "main": "index.js",
+  "main": "bin/index.js",
   "keywords": [
     "express",
     "api",
