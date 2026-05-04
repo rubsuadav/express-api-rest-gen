@@ -16,7 +16,10 @@
     "generator"
   ],
   "files": [
-    "!.github/*"
+    "README.md",
+    "bin/index.js",
+    "utils/**/*",
+    "main.js"
   ],
   "repository": {
     "url": "https://github.com/rubsuadav/express-api-rest-gen",
