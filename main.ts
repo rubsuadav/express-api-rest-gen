@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import { execSync } from "child_process";
 import chalk from "chalk";
+import ora from "ora";
 
 // local imports
 import {
@@ -94,48 +95,88 @@ export function installDependenciesAndConfigureTSConfig(
   projectPath: string,
   language: string,
 ): void {
-  execSync("npm init -y", { cwd: projectPath });
-  console.log(chalk.green("Installing dependencies..."));
-  execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
-    cwd: projectPath,
-  });
-  execSync(`npm install --save-dev ${DEV_DEPENDENCIES.join(" ")}`, {
-    cwd: projectPath,
-  });
-  console.log(chalk.blue("Dependencies installed."));
+  const spinnerInit = ora("Initializing npm project...").start();
+  try {
+    execSync("npm init -y", { cwd: projectPath });
+    spinnerInit.succeed("Project initialized");
+  } catch (error) {
+    spinnerInit.fail("Failed to initialize project");
+    throw error;
+  }
 
-  if (language === "TypeScript") {
-    execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
+  const spinnerDeps = ora("Installing dependencies...").start();
+  try {
+    execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
       cwd: projectPath,
     });
-    execSync(
-      "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
-      { cwd: projectPath },
-    );
-    console.log(chalk.blue("TypeScript configured."));
+    execSync(`npm install --save-dev ${DEV_DEPENDENCIES.join(" ")}`, {
+      cwd: projectPath,
+    });
+    spinnerDeps.succeed("Dependencies installed");
+  } catch (error) {
+    spinnerDeps.fail("Failed to install dependencies");
+    throw error;
+  }
+
+  if (language === "TypeScript") {
+    const spinnerTS = ora("Installing TypeScript dependencies...").start();
+    try {
+      execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
+        cwd: projectPath,
+      });
+      spinnerTS.succeed("TypeScript dependencies installed");
+    } catch (error) {
+      spinnerTS.fail("Failed to install TypeScript dependencies");
+      throw error;
+    }
+
+    const spinnerTSConfig = ora("Configuring TypeScript...").start();
+    try {
+      execSync(
+        "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
+        { cwd: projectPath },
+      );
+      spinnerTSConfig.succeed("TypeScript configured");
+    } catch (error) {
+      spinnerTSConfig.fail("Failed to configure TypeScript");
+      throw error;
+    }
   }
 }
 
 export function createSourceFiles(projectPath: string, language: string): void {
-  console.log(chalk.green("Creating source files..."));
-  const ext = language === "TypeScript" ? "ts" : "js";
-  fs.writeFileSync(path.join(projectPath, `src/app.${ext}`), getAppTemplate());
-  fs.writeFileSync(
-    path.join(projectPath, `src/index.${ext}`),
-    getIndexTemplate(language),
-  );
-  console.log(chalk.blue("Source files created."));
+  const spinner = ora("Creating source files...").start();
+  try {
+    const ext = language === "TypeScript" ? "ts" : "js";
+    fs.writeFileSync(
+      path.join(projectPath, `src/app.${ext}`),
+      getAppTemplate(),
+    );
+    fs.writeFileSync(
+      path.join(projectPath, `src/index.${ext}`),
+      getIndexTemplate(language),
+    );
+    spinner.succeed("Source files created");
+  } catch (error) {
+    spinner.fail("Failed to create source files");
+    throw error;
+  }
 }
 
 export function updatePackage(projectPath: string, language: string): void {
-  const packageJsonPath = path.join(projectPath, "package.json");
-  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-  console.log(chalk.green("Creating scripts in package.json..."));
-  fs.writeFileSync(
-    packageJsonPath,
-    JSON.stringify(updatePackageJson(pkg, language), null, 2),
-  );
-  console.log(chalk.blue("Scripts in package.json created."));
+  const spinner = ora("Creating scripts in package.json...").start();
+  try {
+    const packageJsonPath = path.join(projectPath, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+    fs.writeFileSync(
+      packageJsonPath,
+      JSON.stringify(updatePackageJson(pkg, language), null, 2),
+    );
+    spinner.succeed("Scripts in package.json created");
+  } catch (error) {
+    spinner.fail("Failed to create scripts in package.json");
+    throw error;
+  }
 }
 
 export function getAvailableCommands(projectPath: string): void {

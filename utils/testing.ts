@@ -2,6 +2,7 @@ import { execSync } from "child_process";
 import chalk from "chalk";
 import path from "path";
 import fs from "fs";
+import ora from "ora";
 
 //local imports
 import {
@@ -11,26 +12,39 @@ import {
 } from "./constants";
 
 export function configureTesting(projectPath: string, language: string): void {
-  console.log(
-    chalk.green(
-      "Installing required testing dependencies (jest and supertest)...",
-    ),
-  );
-  execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
-    cwd: projectPath,
-  });
+  const spinnerDeps = ora(
+    "Installing testing dependencies (jest and supertest)...",
+  ).start();
+  try {
+    execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
+      cwd: projectPath,
+    });
+    spinnerDeps.succeed("Testing dependencies installed");
+  } catch (error) {
+    spinnerDeps.fail("Failed to install testing dependencies");
+    throw error;
+  }
+
   if (language === "TypeScript") {
-    execSync(
-      `npm i -D ${TEST_TS_DEPENDENCIES.join(" ")}  && npx ts-jest config:init"`,
-      {
-        cwd: projectPath,
-      },
-    );
+    const spinnerTS = ora(
+      "Installing TypeScript testing dependencies...",
+    ).start();
+    try {
+      execSync(
+        `npm i -D ${TEST_TS_DEPENDENCIES.join(" ")}  && npx ts-jest config:init"`,
+        {
+          cwd: projectPath,
+        },
+      );
+      spinnerTS.succeed("TypeScript testing dependencies installed");
+    } catch (error) {
+      spinnerTS.fail("Failed to install TypeScript testing dependencies");
+      throw error;
+    }
     updateTsConfig(projectPath);
   }
-  console.log(chalk.blue("Dependencies installed."));
+
   updateTestScripts(projectPath, language);
-  console.log(chalk.blue("Scripts in package.json created."));
 }
 
 function updateTsConfig(projectPath: string): void {
@@ -47,18 +61,24 @@ function updateTsConfig(projectPath: string): void {
 }
 
 function updateTestScripts(projectPath: string, language: string): void {
-  const packageJsonPath = path.join(projectPath, "package.json");
-  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-  console.log(chalk.yellow("Creating test scripts in package.json..."));
-  pkg.scripts = {
-    ...pkg.scripts,
-    test: language === "TypeScript" ? "jest" : `${TEST_CONFIG}`,
-    "test:watch":
-      language === "TypeScript" ? "jest --watch" : `${TEST_CONFIG} --watch`,
-    "test:coverage":
-      language === "TypeScript"
-        ? "jest --coverage"
-        : `${TEST_CONFIG} --coverage`,
-  };
-  fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
+  const spinner = ora("Updating test scripts in package.json...").start();
+  try {
+    const packageJsonPath = path.join(projectPath, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+    pkg.scripts = {
+      ...pkg.scripts,
+      test: language === "TypeScript" ? "jest" : `${TEST_CONFIG}`,
+      "test:watch":
+        language === "TypeScript" ? "jest --watch" : `${TEST_CONFIG} --watch`,
+      "test:coverage":
+        language === "TypeScript"
+          ? "jest --coverage"
+          : `${TEST_CONFIG} --coverage`,
+    };
+    fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
+    spinner.succeed("Test scripts added to package.json");
+  } catch (error) {
+    spinner.fail("Failed to update test scripts");
+    throw error;
+  }
 }

@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
+import ora from "ora";
 
 export function validateProjectName(name: string): boolean | string {
   // npm package names can only contain lowercase letters, numbers, hyphens, and underscores
@@ -30,11 +31,16 @@ export function checkProjectExists(
 }
 
 export function createFolders(basePath: string, folders: string[]): void {
-  folders.forEach((folder: string) => {
-    console.log(chalk.green(`Creating folder: ${folder}`));
-    fs.mkdirSync(path.join(basePath, folder), { recursive: true });
-  });
-  console.log(chalk.blue("Folders created successfully."));
+  const spinner = ora("Creating project structure...").start();
+  try {
+    folders.forEach((folder: string) => {
+      fs.mkdirSync(path.join(basePath, folder), { recursive: true });
+    });
+    spinner.succeed("Project structure created successfully");
+  } catch (error) {
+    spinner.fail("Failed to create project structure");
+    throw error;
+  }
 }
 
 export function getAppTemplate(): string {
