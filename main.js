@@ -14,6 +14,7 @@ import {
   getAppTemplate,
   getIndexTemplate,
   updatePackageJson,
+  validateProjectName,
 } from "./utils/utils.js";
 
 export async function handleVersionFlag() {
@@ -57,6 +58,8 @@ export async function promptUser() {
       type: "input",
       name: "projectName",
       message: "Enter the name of your project:",
+      validate: (input) =>
+        validateProjectName(input) === true || validateProjectName(input),
     },
     {
       type: "list",

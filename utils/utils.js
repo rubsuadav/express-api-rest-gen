@@ -2,6 +2,22 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 
+export function validateProjectName(name) {
+  // npm package names can only contain lowercase letters, numbers, hyphens, and underscores
+  // Pattern: /^[a-z0-9_-]+$/i allows letters, numbers, hyphens, and underscores
+  const validNamePattern = /^[a-z0-9_-]+$/i;
+
+  if (!name || name.trim().length === 0) {
+    return "Project name cannot be empty.";
+  }
+
+  if (!validNamePattern.test(name)) {
+    return "Invalid project name. Project names can only contain letters, numbers, hyphens (-), and underscores (_). No special characters like @, #, $, etc. are allowed.";
+  }
+
+  return true;
+}
+
 export function checkProjectExists(projectPath, projectName) {
   if (fs.existsSync(projectPath)) {
     console.log(chalk.red(`Project ${projectName} already exists.`));
