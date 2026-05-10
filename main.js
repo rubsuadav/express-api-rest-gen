@@ -32,9 +32,9 @@ export function handleVersionFlag() {
   }
   if (latest !== actual) {
     console.log(
-      chalk.yellow(`A new version (${latest}) is available! Update with:`)
+      chalk.yellow(`A new version (${latest}) is available! Update with:`),
     );
-    console.log("npm i -g express-api-rest-gen");
+    console.log(chalk.yellow(`npm i -g express-api-rest-gen@latest`));
     process.exit(0);
   }
 }
@@ -87,7 +87,7 @@ export function installDependenciesAndConfigureTSConfig(projectPath, language) {
     });
     execSync(
       "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
-      { cwd: projectPath }
+      { cwd: projectPath },
     );
     console.log(chalk.blue("TypeScript configurado."));
   }
@@ -99,7 +99,7 @@ export function createSourceFiles(projectPath, language) {
   fs.writeFileSync(path.join(projectPath, `src/app.${ext}`), getAppTemplate());
   fs.writeFileSync(
     path.join(projectPath, `src/index.${ext}`),
-    getIndexTemplate(language)
+    getIndexTemplate(language),
   );
   console.log(chalk.blue("Archivos fuente creados."));
 }
@@ -110,14 +110,14 @@ export function updatePackage(projectPath, language) {
   console.log(chalk.green("Creando scripts en package.json..."));
   fs.writeFileSync(
     packageJsonPath,
-    JSON.stringify(updatePackageJson(pkg, language), null, 2)
+    JSON.stringify(updatePackageJson(pkg, language), null, 2),
   );
   console.log(chalk.blue("Scripts en package.json creados."));
 }
 
 export function getAvailableCommands(projectPath) {
   const packageJson = JSON.parse(
-    fs.readFileSync(path.join(projectPath, "package.json"), "utf-8")
+    fs.readFileSync(path.join(projectPath, "package.json"), "utf-8"),
   );
   const scripts = packageJson.scripts;
   console.log(chalk.blue(`Comandos disponibles:`));
