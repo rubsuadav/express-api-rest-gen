@@ -4,7 +4,7 @@ import chalk from "chalk";
 
 export function checkProjectExists(projectPath, projectName) {
   if (fs.existsSync(projectPath)) {
-    console.log(chalk.red(`El proyecto ${projectName} ya existe.`));
+    console.log(chalk.red(`Project ${projectName} already exists.`));
     return true;
   }
   return false;
@@ -12,10 +12,10 @@ export function checkProjectExists(projectPath, projectName) {
 
 export function createFolders(basePath, folders) {
   folders.forEach((folder) => {
-    console.log(chalk.green(`Creando carpeta: ${folder}`));
+    console.log(chalk.green(`Creating folder: ${folder}`));
     fs.mkdirSync(path.join(basePath, folder), { recursive: true });
   });
-  console.log(chalk.blue("Carpetas creadas con éxito."));
+  console.log(chalk.blue("Folders created successfully."));
 }
 
 export function getAppTemplate() {
@@ -60,7 +60,7 @@ export function updatePackageJson(pkg, language) {
 }
 
 export function getMongoDBTemplate(language) {
-  console.log(chalk.green("Generando plantilla de conexión a MongoDB..."));
+  console.log(chalk.green("Generating MongoDB connection template..."));
   return language === "TypeScript"
     ? `
     import mongoose from 'mongoose';
@@ -71,9 +71,9 @@ export function getMongoDBTemplate(language) {
         await mongoose.connect(process.env.MONGODB_URI as string, {
           dbName: process.env.DB_NAME as string,
         });
-        console.log('MongoDB conectado');
+        console.log('MongoDB connected');
       } catch (error) {
-        console.error('No se puede conectar a la base de datos');
+        console.error('Cannot connect to the database');
       }
     }`
     : `
@@ -85,15 +85,15 @@ export function getMongoDBTemplate(language) {
         await mongoose.connect(process.env.MONGODB_URI, {
           dbName: process.env.DB_NAME,
         });
-        console.log('MongoDB conectado');
+        console.log('MongoDB connected');
       } catch (error) {
-        console.error('No se puede conectar a la base de datos');
+        console.error('Cannot connect to the database');
       }
     }`;
 }
 
 export function getSQLTemplate(language) {
-  console.log(chalk.green("Generando plantilla de conexión..."));
+  console.log(chalk.green("Generating connection template..."));
   return language === "TypeScript"
     ? `
     import { Sequelize } from 'sequelize';
@@ -105,7 +105,7 @@ export function getSQLTemplate(language) {
       try {
         await sequelize.authenticate();
       } catch (error) {
-        console.error('No se puede conectar a la base de datos');
+        console.error('Cannot connect to the database');
       }
     }`
     : `
@@ -118,7 +118,7 @@ export function getSQLTemplate(language) {
       try {
         await sequelize.authenticate();
       } catch (error) {
-        console.error('No se puede conectar a la base de datos');
+        console.error('Cannot connect to the database');
       }
     }`;
 }

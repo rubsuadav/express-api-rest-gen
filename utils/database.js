@@ -13,7 +13,7 @@ export function connectDatabase(projectPath, database, language) {
     case "MongoDB":
       fs.writeFileSync(
         path.join(projectPath, `.env`),
-        "MONGODB_URI=mongodb://127.0.0.1:27017/\nDB_NAME=yourDBNAME"
+        "MONGODB_URI=mongodb://127.0.0.1:27017/\nDB_NAME=yourDBNAME",
       );
       break;
     case "PostgreSQL":
@@ -25,25 +25,25 @@ export function connectDatabase(projectPath, database, language) {
   }
   fs.writeFileSync(
     path.join(projectPath, `database.${ext}`),
-    getDatabaseTemplate(projectPath, database, language)
+    getDatabaseTemplate(projectPath, database, language),
   );
-  console.log(chalk.blue("Archivos de conexión a la base de datos creado."));
+  console.log(chalk.blue("Database connection files created."));
 }
 
 function getDatabaseTemplate(projectPath, database, language) {
   switch (database) {
     case "MongoDB":
-      console.log(chalk.green("Instalando Mongoose..."));
+      console.log(chalk.green("Installing Mongoose..."));
       execSync(`npm i mongoose`, { cwd: projectPath });
       return getMongoDBTemplate(language);
     case "PostgreSQL":
       console.log(
-        chalk.green("Instalando driver de PostgreSQL y ORM sequelize...")
+        chalk.green("Installing PostgreSQL driver and sequelize ORM..."),
       );
       execSync(`npm i pg pg-hstore sequelize`, { cwd: projectPath });
       return getSQLTemplate(language);
     case "MySQL":
-      console.log(chalk.green("Instalando driver de MySQL y ORM sequelize..."));
+      console.log(chalk.green("Installing MySQL driver and sequelize ORM..."));
       execSync(`npm i mysql2 sequelize`, { cwd: projectPath });
       return getSQLTemplate(language);
     default:

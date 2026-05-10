@@ -44,26 +44,26 @@ export async function promptUser() {
     {
       type: "input",
       name: "projectName",
-      message: "¿Nombre de tu API REST de Express?",
+      message: "Enter the name of your project:",
     },
     {
       type: "list",
       name: "language",
-      message: "¿Quieres usar TypeScript o JavaScript?",
+      message: "Do you want to use TypeScript or JavaScript?",
       choices: ["JavaScript", "TypeScript"],
       default: "JavaScript",
     },
     {
       type: "list",
       name: "database",
-      message: "¿Qué base de datos quieres usar?",
+      message: "What database do you want to use?",
       choices: ["MongoDB", "PostgreSQL", "MySQL"],
       default: "MongoDB",
     },
     {
       type: "list",
       name: "testing",
-      message: "¿Quieres configurar los tests de backend?",
+      message: "Do you want to configure backend tests?",
       choices: ["Yes", "No"],
       default: "Yes",
     },
@@ -72,14 +72,14 @@ export async function promptUser() {
 
 export function installDependenciesAndConfigureTSConfig(projectPath, language) {
   execSync("npm init -y", { cwd: projectPath });
-  console.log(chalk.green("Instalando dependencias..."));
+  console.log(chalk.green("Installing dependencies..."));
   execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
   });
   execSync(`npm install --save-dev ${DEV_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
   });
-  console.log(chalk.blue("Dependencias instaladas."));
+  console.log(chalk.blue("Dependencies installed."));
 
   if (language === "TypeScript") {
     execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
@@ -89,30 +89,30 @@ export function installDependenciesAndConfigureTSConfig(projectPath, language) {
       "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
       { cwd: projectPath },
     );
-    console.log(chalk.blue("TypeScript configurado."));
+    console.log(chalk.blue("TypeScript configured."));
   }
 }
 
 export function createSourceFiles(projectPath, language) {
-  console.log(chalk.green("Creando archivos fuente..."));
+  console.log(chalk.green("Creating source files..."));
   const ext = language === "TypeScript" ? "ts" : "js";
   fs.writeFileSync(path.join(projectPath, `src/app.${ext}`), getAppTemplate());
   fs.writeFileSync(
     path.join(projectPath, `src/index.${ext}`),
     getIndexTemplate(language),
   );
-  console.log(chalk.blue("Archivos fuente creados."));
+  console.log(chalk.blue("Source files created."));
 }
 
 export function updatePackage(projectPath, language) {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-  console.log(chalk.green("Creando scripts en package.json..."));
+  console.log(chalk.green("Creating scripts in package.json..."));
   fs.writeFileSync(
     packageJsonPath,
     JSON.stringify(updatePackageJson(pkg, language), null, 2),
   );
-  console.log(chalk.blue("Scripts en package.json creados."));
+  console.log(chalk.blue("Scripts in package.json created."));
 }
 
 export function getAvailableCommands(projectPath) {
@@ -120,7 +120,7 @@ export function getAvailableCommands(projectPath) {
     fs.readFileSync(path.join(projectPath, "package.json"), "utf-8"),
   );
   const scripts = packageJson.scripts;
-  console.log(chalk.blue(`Comandos disponibles:`));
+  console.log(chalk.blue(`Available commands:`));
   Object.keys(scripts).forEach((script) => {
     console.log(chalk.blue(`- npm run ${script}: ${scripts[script]}`));
   });

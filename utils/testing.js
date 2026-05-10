@@ -13,8 +13,8 @@ import {
 export function configureTesting(projectPath, language) {
   console.log(
     chalk.green(
-      "Instalando dependencias necesarias de test (jest y supertest)..."
-    )
+      "Installing required testing dependencies (jest and supertest)...",
+    ),
   );
   execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
     cwd: projectPath,
@@ -28,9 +28,9 @@ export function configureTesting(projectPath, language) {
     );
     updateTsConfig(projectPath);
   }
-  console.log(chalk.blue("Dependencias instaladas."));
+  console.log(chalk.blue("Dependencies installed."));
   updateTestScripts(projectPath, language);
-  console.log(chalk.blue("Scripts en package.json creados."));
+  console.log(chalk.blue("Scripts in package.json created."));
 }
 
 function updateTsConfig(projectPath) {
@@ -40,7 +40,7 @@ function updateTsConfig(projectPath) {
       .readFileSync(tsconfigPath, "utf-8")
       .replace(/\/\/.*$/gm, "") // drop single-line comments
       .replace(/\/\*[\s\S]*?\*\//g, "") // drop multi-line comments
-      .replace(/,\s*([}\]])/g, "$1") // drop trailing commas
+      .replace(/,\s*([}\]])/g, "$1"), // drop trailing commas
   );
   tsconfig.compilerOptions.types.push("jest");
   fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
@@ -49,7 +49,7 @@ function updateTsConfig(projectPath) {
 function updateTestScripts(projectPath, language) {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-  console.log(chalk.yellow("Creando scripts de testing en package.json..."));
+  console.log(chalk.yellow("Creating test scripts in package.json..."));
   pkg.scripts = {
     ...pkg.scripts,
     test: language === "TypeScript" ? "jest" : `${TEST_CONFIG}`,

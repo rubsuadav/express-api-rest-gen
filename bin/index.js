@@ -31,16 +31,16 @@ async function generateProject() {
   testing === "Yes" ? configureTesting(projectPath, language) : null;
   console.log(
     chalk.green(
-      `API ${projectName} con Express y con (${language}) generada con éxito`,
+      `API ${projectName} created with Express and (${language}) successfully`,
     ),
   );
   console.log(
-    chalk.blue(`Para empezar a trabajar en tu API REST, sigue estos pasos:`),
+    chalk.blue(`To start working on your REST API, follow these steps:`),
   );
   console.log(chalk.blue(`1. cd ${projectName}`));
   console.log(chalk.blue(`2. npm run dev`));
   console.log(
-    chalk.blue(`Tu servidor estará corriendo en http://localhost:3000`),
+    chalk.blue(`Your server will be running at http://localhost:3000`),
   );
   getAvailableCommands(projectPath);
 }
@@ -50,7 +50,7 @@ async function main() {
   try {
     await generateProject();
   } catch (error) {
-    console.error(chalk.red("Error al generar el proyecto:", error));
+    console.error(chalk.red("Error generating the project:", error));
     process.exit(1);
   }
 }
