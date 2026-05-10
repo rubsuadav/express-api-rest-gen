@@ -32,6 +32,14 @@ jobs:
 
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
+
+      - name: Create initial tag if not exists
+        run: |
+          if ! git rev-parse v$(node -p "require('./package.json').version") >/dev/null 2>&1; then
+            git tag v$(node -p "require('./package.json').version")
+            git push origin v$(node -p "require('./package.json').version")
+          fi
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
