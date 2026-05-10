@@ -1,5 +1,4 @@
 import { execSync } from "child_process";
-import chalk from "chalk";
 import path from "path";
 import fs from "fs";
 import ora from "ora";
