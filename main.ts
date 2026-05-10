@@ -101,7 +101,7 @@ export function installDependenciesAndConfigureTSConfig(
     spinnerInit.succeed("Project initialized");
   } catch (error) {
     spinnerInit.fail("Failed to initialize project");
-    throw error;
+    spinnerInit.stop();
   }
 
   const spinnerDeps = ora("Installing dependencies...").start();
@@ -115,7 +115,7 @@ export function installDependenciesAndConfigureTSConfig(
     spinnerDeps.succeed("Dependencies installed");
   } catch (error) {
     spinnerDeps.fail("Failed to install dependencies");
-    throw error;
+    spinnerDeps.stop();
   }
 
   if (language === "TypeScript") {
@@ -127,7 +127,7 @@ export function installDependenciesAndConfigureTSConfig(
       spinnerTS.succeed("TypeScript dependencies installed");
     } catch (error) {
       spinnerTS.fail("Failed to install TypeScript dependencies");
-      throw error;
+      spinnerTS.stop();
     }
 
     const spinnerTSConfig = ora("Configuring TypeScript...").start();
@@ -139,7 +139,7 @@ export function installDependenciesAndConfigureTSConfig(
       spinnerTSConfig.succeed("TypeScript configured");
     } catch (error) {
       spinnerTSConfig.fail("Failed to configure TypeScript");
-      throw error;
+      spinnerTSConfig.stop();
     }
   }
 }
@@ -159,7 +159,7 @@ export function createSourceFiles(projectPath: string, language: string): void {
     spinner.succeed("Source files created");
   } catch (error) {
     spinner.fail("Failed to create source files");
-    throw error;
+    spinner.stop();
   }
 }
 
@@ -175,7 +175,7 @@ export function updatePackage(projectPath: string, language: string): void {
     spinner.succeed("Scripts in package.json created");
   } catch (error) {
     spinner.fail("Failed to create scripts in package.json");
-    throw error;
+    spinner.stop();
   }
 }
 

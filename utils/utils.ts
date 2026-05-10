@@ -39,7 +39,7 @@ export function createFolders(basePath: string, folders: string[]): void {
     spinner.succeed("Project structure created successfully");
   } catch (error) {
     spinner.fail("Failed to create project structure");
-    throw error;
+    spinner.stop();
   }
 }
 
@@ -85,9 +85,10 @@ export function updatePackageJson(pkg: any, language: string): any {
 }
 
 export function getMongoDBTemplate(language: string): string {
-  console.log(chalk.green("Generating MongoDB connection template..."));
-  return language === "TypeScript"
-    ? `
+  const spinner = ora("Generating MongoDB connection template...").start();
+  const text =
+    language === "TypeScript"
+      ? `
     import mongoose from 'mongoose';
     import 'dotenv/config';
 
@@ -101,7 +102,7 @@ export function getMongoDBTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`
-    : `
+      : `
     import mongoose from 'mongoose';
     import 'dotenv/config';
 
@@ -115,12 +116,15 @@ export function getMongoDBTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`;
+  spinner.succeed("MongoDB template generated");
+  return text;
 }
 
 export function getSQLTemplate(language: string): string {
-  console.log(chalk.green("Generating connection template..."));
-  return language === "TypeScript"
-    ? `
+  const spinner = ora("Generating connection template...").start();
+  const text =
+    language === "TypeScript"
+      ? `
     import { Sequelize } from 'sequelize';
     import 'dotenv/config';
 
@@ -133,7 +137,7 @@ export function getSQLTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`
-    : `
+      : `
     import { Sequelize } from 'sequelize';
     import 'dotenv/config';
 
@@ -146,4 +150,6 @@ export function getSQLTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`;
+  spinner.succeed("SQL template generated");
+  return text;
 }

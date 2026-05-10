@@ -33,12 +33,11 @@ export function connectDatabase(
         break;
     }
     spinner.succeed("Database config file created");
+    getDatabaseTemplate(projectPath, database, language);
   } catch (error) {
     spinner.fail("Failed to configure database");
-    throw error;
+    spinner.stop();
   }
-
-  getDatabaseTemplate(projectPath, database, language);
 }
 
 function getDatabaseTemplate(
@@ -56,7 +55,7 @@ function getDatabaseTemplate(
         spinnerMongo.succeed("Mongoose installed");
       } catch (error) {
         spinnerMongo.fail("Failed to install Mongoose");
-        throw error;
+        spinnerMongo.stop();
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),
@@ -72,7 +71,7 @@ function getDatabaseTemplate(
         spinnerPostgres.succeed("PostgreSQL driver and sequelize installed");
       } catch (error) {
         spinnerPostgres.fail("Failed to install PostgreSQL dependencies");
-        throw error;
+        spinnerPostgres.stop();
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),
@@ -88,7 +87,7 @@ function getDatabaseTemplate(
         spinnerMySQL.succeed("MySQL driver and sequelize installed");
       } catch (error) {
         spinnerMySQL.fail("Failed to install MySQL dependencies");
-        throw error;
+        spinnerMySQL.stop();
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),

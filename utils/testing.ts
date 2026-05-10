@@ -22,7 +22,7 @@ export function configureTesting(projectPath: string, language: string): void {
     spinnerDeps.succeed("Testing dependencies installed");
   } catch (error) {
     spinnerDeps.fail("Failed to install testing dependencies");
-    throw error;
+    spinnerDeps.stop();
   }
 
   if (language === "TypeScript") {
@@ -39,7 +39,7 @@ export function configureTesting(projectPath: string, language: string): void {
       spinnerTS.succeed("TypeScript testing dependencies installed");
     } catch (error) {
       spinnerTS.fail("Failed to install TypeScript testing dependencies");
-      throw error;
+      spinnerTS.stop();
     }
     updateTsConfig(projectPath);
   }
@@ -79,6 +79,6 @@ function updateTestScripts(projectPath: string, language: string): void {
     spinner.succeed("Test scripts added to package.json");
   } catch (error) {
     spinner.fail("Failed to update test scripts");
-    throw error;
+    spinner.stop();
   }
 }
