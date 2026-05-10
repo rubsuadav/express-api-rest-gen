@@ -12,7 +12,11 @@ export function connectDatabase(
   database: string,
   language: string,
 ): void {
-  const spinner = ora(`Configuring ${database} database...`).start();
+  const spinner = ora({
+    text: `Configuring ${database} database...`,
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     switch (database) {
       case "MongoDB":
@@ -48,7 +52,11 @@ function getDatabaseTemplate(
 
   switch (database) {
     case "MongoDB":
-      const spinnerMongo = ora("Installing Mongoose...").start();
+      const spinnerMongo = ora({
+        text: "Installing Mongoose...",
+        spinner: "speaker",
+        color: "blue",
+      }).start();
       try {
         execSync(`npm i mongoose`, { cwd: projectPath });
         spinnerMongo.succeed("Mongoose installed");
@@ -62,9 +70,11 @@ function getDatabaseTemplate(
       );
       break;
     case "PostgreSQL":
-      const spinnerPostgres = ora(
-        "Installing PostgreSQL driver and sequelize ORM...",
-      ).start();
+      const spinnerPostgres = ora({
+        text: "Installing PostgreSQL driver and sequelize ORM...",
+        spinner: "speaker",
+        color: "blue",
+      }).start();
       try {
         execSync(`npm i pg pg-hstore sequelize`, { cwd: projectPath });
         spinnerPostgres.succeed("PostgreSQL driver and sequelize installed");
@@ -78,9 +88,11 @@ function getDatabaseTemplate(
       );
       break;
     case "MySQL":
-      const spinnerMySQL = ora(
-        "Installing MySQL driver and sequelize ORM...",
-      ).start();
+      const spinnerMySQL = ora({
+        text: "Installing MySQL driver and sequelize ORM...",
+        spinner: "speaker",
+        color: "blue",
+      }).start();
       try {
         execSync(`npm i mysql2 sequelize`, { cwd: projectPath });
         spinnerMySQL.succeed("MySQL driver and sequelize installed");

@@ -11,9 +11,11 @@ import {
 } from "./constants";
 
 export function configureTesting(projectPath: string, language: string): void {
-  const spinnerDeps = ora(
-    "Installing testing dependencies (jest and supertest)...",
-  ).start();
+  const spinnerDeps = ora({
+    text: "Installing testing dependencies (jest and supertest)...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
       cwd: projectPath,
@@ -25,9 +27,11 @@ export function configureTesting(projectPath: string, language: string): void {
   }
 
   if (language === "TypeScript") {
-    const spinnerTS = ora(
-      "Installing TypeScript testing dependencies...",
-    ).start();
+    const spinnerTS = ora({
+      text: "Installing TypeScript testing dependencies...",
+      spinner: "speaker",
+      color: "blue",
+    }).start();
     try {
       execSync(
         `npm i -D ${TEST_TS_DEPENDENCIES.join(" ")}  && npx ts-jest config:init"`,
@@ -60,7 +64,11 @@ function updateTsConfig(projectPath: string): void {
 }
 
 function updateTestScripts(projectPath: string, language: string): void {
-  const spinner = ora("Updating test scripts in package.json...").start();
+  const spinner = ora({
+    text: "Updating test scripts in package.json...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     const packageJsonPath = path.join(projectPath, "package.json");
     const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));

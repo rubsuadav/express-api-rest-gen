@@ -95,7 +95,11 @@ export function installDependenciesAndConfigureTSConfig(
   projectPath: string,
   language: string,
 ): void {
-  const spinnerInit = ora("Initializing npm project...").start();
+  const spinnerInit = ora({
+    text: "Initializing npm project...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     execSync("npm init -y", { cwd: projectPath });
     spinnerInit.succeed("Project initialized");
@@ -104,7 +108,11 @@ export function installDependenciesAndConfigureTSConfig(
     spinnerInit.stop();
   }
 
-  const spinnerDeps = ora("Installing dependencies...").start();
+  const spinnerDeps = ora({
+    text: "Installing dependencies...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
       cwd: projectPath,
@@ -119,7 +127,11 @@ export function installDependenciesAndConfigureTSConfig(
   }
 
   if (language === "TypeScript") {
-    const spinnerTS = ora("Installing TypeScript dependencies...").start();
+    const spinnerTS = ora({
+      text: "Installing TypeScript dependencies...",
+      spinner: "speaker",
+      color: "blue",
+    }).start();
     try {
       execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
         cwd: projectPath,
@@ -130,7 +142,11 @@ export function installDependenciesAndConfigureTSConfig(
       spinnerTS.stop();
     }
 
-    const spinnerTSConfig = ora("Configuring TypeScript...").start();
+    const spinnerTSConfig = ora({
+      text: "Configuring TypeScript...",
+      spinner: "speaker",
+      color: "blue",
+    }).start();
     try {
       execSync(
         "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
@@ -145,7 +161,11 @@ export function installDependenciesAndConfigureTSConfig(
 }
 
 export function createSourceFiles(projectPath: string, language: string): void {
-  const spinner = ora("Creating source files...").start();
+  const spinner = ora({
+    text: "Creating source files...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     const ext = language === "TypeScript" ? "ts" : "js";
     fs.writeFileSync(
@@ -164,7 +184,11 @@ export function createSourceFiles(projectPath: string, language: string): void {
 }
 
 export function updatePackage(projectPath: string, language: string): void {
-  const spinner = ora("Creating scripts in package.json...").start();
+  const spinner = ora({
+    text: "Creating scripts in package.json...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     const packageJsonPath = path.join(projectPath, "package.json");
     const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));

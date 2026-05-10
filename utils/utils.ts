@@ -31,7 +31,11 @@ export function checkProjectExists(
 }
 
 export function createFolders(basePath: string, folders: string[]): void {
-  const spinner = ora("Creating project structure...").start();
+  const spinner = ora({
+    text: "Creating project structure...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   try {
     folders.forEach((folder: string) => {
       fs.mkdirSync(path.join(basePath, folder), { recursive: true });
@@ -85,7 +89,11 @@ export function updatePackageJson(pkg: any, language: string): any {
 }
 
 export function getMongoDBTemplate(language: string): string {
-  const spinner = ora("Generating MongoDB connection template...").start();
+  const spinner = ora({
+    text: "Generating MongoDB connection template...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   const text =
     language === "TypeScript"
       ? `
@@ -121,7 +129,11 @@ export function getMongoDBTemplate(language: string): string {
 }
 
 export function getSQLTemplate(language: string): string {
-  const spinner = ora("Generating connection template...").start();
+  const spinner = ora({
+    text: "Generating SQL connection template...",
+    spinner: "speaker",
+    color: "blue",
+  }).start();
   const text =
     language === "TypeScript"
       ? `
