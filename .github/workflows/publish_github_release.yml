@@ -6,25 +6,21 @@ on:
       - master
 
 permissions:
-  contents: write
-
-# Ensure only one publish workflow runs at a time for master branch
-concurrency:
-  group: publish-master
-  cancel-in-progress: false
+  contents: read
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Fetch all tags from remote
-        shell: bash
-        run: git fetch --force --tags origin
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -32,190 +28,11 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        shell: bash
         run: npm ci
 
-      - name: Calculate next version and create tag
-        id: semver
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "=== DEBUG: Starting version calculation ==="
-          echo "Available tags in repository:"
-          git tag --list 'v*.*.*' --sort=-v:refname || true
-          echo ""
-
-          # Get the latest tag
-          PREVIOUS_TAG="$(git tag --list 'v*.*.*' --sort=-v:refname | head -n1 || true)"
-          echo "Latest tag found: $PREVIOUS_TAG"
-
-          # Determine the commit range for analysis
-          if [[ -n "$PREVIOUS_TAG" ]]; then
-            RANGE="$PREVIOUS_TAG..HEAD"
-            BASE_VERSION="${PREVIOUS_TAG#v}"
-          else
-            RANGE="HEAD"
-            BASE_VERSION="0.0.0"
-          fi
-
-          # Check if there are new commits
-          COMMITS_COUNT=$(git log "$RANGE" --oneline | wc -l)
-          if [[ $COMMITS_COUNT -eq 0 ]]; then
-            echo "No new commits since last release. Skipping release."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
-
-          # Get commit subjects and bodies
-          mapfile -t SUBJECTS < <(git log "$RANGE" --format=%s)
-          mapfile -t BODIES < <(git log "$RANGE" --format=%B)
-
-          # Determine bump type based on commits
-          BUMP="patch"
-
-          # Check for breaking changes (MAJOR)
-          for subject in "${SUBJECTS[@]}"; do
-            if [[ "$subject" =~ ^[a-zA-Z]+(\(.+\))?!: ]]; then
-              BUMP="major"
-              break
-            fi
-          done
-
-          if [[ "$BUMP" != "major" ]]; then
-            for body in "${BODIES[@]}"; do
-              if [[ "$body" == *"BREAKING CHANGE:"* || "$body" == *"BREAKING-CHANGE:"* ]]; then
-                BUMP="major"
-                break
-              fi
-            done
-          fi
-
-          # Check for features (FEATURES => MAJOR in this repo policy)
-          if [[ "$BUMP" == "patch" ]]; then
-            for subject in "${SUBJECTS[@]}"; do
-              if [[ "$subject" =~ ^feat(\(.+\))?: ]] || [[ "$subject" =~ ^feature(\(.+\))?: ]] || [[ "$subject" =~ ^add(\(.+\))?: ]]; then
-                BUMP="major"
-                break
-              fi
-            done
-          fi
-
-          # Check for enhancements/perf (MINOR)
-          if [[ "$BUMP" == "patch" ]]; then
-            for subject in "${SUBJECTS[@]}"; do
-              if [[ "$subject" =~ ^perf(\(.+\))?: ]] || [[ "$subject" =~ ^enhance(ment)?(\(.+\))?: ]]; then
-                BUMP="minor"
-                break
-              fi
-            done
-          fi
-
-          # Calculate next version
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
-          case "$BUMP" in
-            major)
-              NEXT_VERSION="$((MAJOR + 1)).0.0"
-              ;;
-            minor)
-              NEXT_VERSION="$MAJOR.$((MINOR + 1)).0"
-              ;;
-            patch)
-              NEXT_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-              ;;
-          esac
-
-          echo "Bump type: $BUMP"
-          echo "Base version from latest tag: $BASE_VERSION"
-          echo "Calculated next version: $NEXT_VERSION"
-          echo ""
-
-          # If calculated tag already exists locally, keep incrementing patch until a free tag is found
-          RESOLVED_VERSION="$NEXT_VERSION"
-          ATTEMPT=0
-          MAX_ATTEMPTS=100
-          while [[ $ATTEMPT -lt $MAX_ATTEMPTS ]]; do
-            if ! git rev-parse "v$RESOLVED_VERSION" >/dev/null 2>&1; then
-              # Tag does not exist, we can use this version
-              echo "Tag v$RESOLVED_VERSION is available (attempt $ATTEMPT)"
-              break
-            fi
-            # Tag exists, increment patch and try again
-            echo "Tag v$RESOLVED_VERSION already exists, trying next patch..."
-            IFS='.' read -r C_MAJOR C_MINOR C_PATCH <<< "$RESOLVED_VERSION"
-            RESOLVED_VERSION="$C_MAJOR.$C_MINOR.$((C_PATCH + 1))"
-            ATTEMPT=$((ATTEMPT + 1))
-          done
-
-          if [[ $ATTEMPT -ge $MAX_ATTEMPTS ]]; then
-            echo "ERROR: Could not find available version after $MAX_ATTEMPTS attempts"
-            exit 1
-          fi
-
-          echo "Final resolved version: v$RESOLVED_VERSION"
-          echo ""
-
-          # Output the results
-          {
-            echo "previous_tag=$PREVIOUS_TAG"
-            echo "range=$RANGE"
-            echo "bump=$BUMP"
-            echo "version=$RESOLVED_VERSION"
-            echo "tag=v$RESOLVED_VERSION"
-          } >> "$GITHUB_OUTPUT"
-
-          echo "Generated tag: v$RESOLVED_VERSION (bump: $BUMP)"
-
-      - name: Build release notes from commit messages
-        if: steps.semver.outputs.has_changes == 'true'
-        id: notes
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          RANGE="${{ steps.semver.outputs.range }}"
-          VERSION="${{ steps.semver.outputs.version }}"
-
-          {
-            echo "# v$VERSION"
-            echo
-            echo "Bump detected: **${{ steps.semver.outputs.bump }}**"
-            echo
-            echo "## Changes"
-            git log "$RANGE" --format='- %s (%h)'
-          } > RELEASE_NOTES.md
-
-      - name: Create and push git tag
-        if: steps.semver.outputs.has_changes == 'true'
-        shell: bash
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          TAG="${{ steps.semver.outputs.tag }}"
-          VERSION="${{ steps.semver.outputs.version }}"
-
-          # Configure git
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Create annotated tag
-          git tag -a "$TAG" -m "Release $VERSION"
-
-          # Push tag
-          git push origin "$TAG"
-
-          echo "Tag $TAG created and pushed successfully"
-
-      - name: Create GitHub release
-        if: steps.semver.outputs.has_changes == 'true'
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.semver.outputs.tag }}
-          name: ${{ steps.semver.outputs.tag }}
-          body_path: RELEASE_NOTES.md
-          token: ${{ secrets.GITHUB_TOKEN }}
-          generate_release_notes: true
+        run: npx semantic-release
