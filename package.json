@@ -1,14 +1,16 @@
 {
   "name": "express-api-rest-gen",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "start": "node bin/index.js"
+    "build": "npx tsc",
+    "start": "npm run build && node build/bin/index.js",
+    "dev": "tsx bin/index.ts"
   },
   "bin": {
-    "express-api-rest-gen": "bin/index.js"
+    "express-api-rest-gen": "bin/index.ts"
   },
   "version": "4.4.0",
-  "main": "bin/index.js",
+  "main": "bin/index.ts",
   "keywords": [
     "express",
     "api",
@@ -17,9 +19,10 @@
   ],
   "files": [
     "README.md",
-    "bin/index.js",
-    "utils/**/*",
-    "main.js"
+    "bin/index.ts",
+    "utils/**/*.ts",
+    "main.ts",
+    "tsconfig.json"
   ],
   "repository": {
     "url": "https://github.com/rubsuadav/express-api-rest-gen",
@@ -41,6 +44,9 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.8",
-    "@semantic-release/npm": "^13.1.5"
+    "@semantic-release/npm": "^13.1.5",
+    "@types/node": "^25.6.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
   }
 }

@@ -9,21 +9,21 @@ import {
   BASE_DEPENDENCIES,
   DEV_DEPENDENCIES,
   TS_DEPENDENCIES,
-} from "./utils/constants.js";
+} from "./utils/constants";
 import {
   getAppTemplate,
   getIndexTemplate,
   updatePackageJson,
   validateProjectName,
-} from "./utils/utils.js";
+} from "./utils/utils";
 
-export async function handleVersionFlag() {
+export async function handleVersionFlag(): Promise<void> {
   const args = process.argv.slice(2);
   const actual = execSync("npm list -g express-api-rest-gen", {
     encoding: "utf-8",
   })
     .trim()
-    .match(/express-api-rest-gen@([\d.]+)/)[1]; // Extract version using regex
+    .match(/express-api-rest-gen@([\d.]+)/)![1]; // Extract version using regex
   const latest = execSync("npm view express-api-rest-gen version", {
     encoding: "utf-8",
   }).trim();
@@ -52,13 +52,18 @@ export async function handleVersionFlag() {
   }
 }
 
-export async function promptUser() {
+export async function promptUser(): Promise<{
+  projectName: string;
+  language: string;
+  database: string;
+  testing: string;
+}> {
   return await inquirer.prompt([
     {
       type: "input",
       name: "projectName",
       message: "Enter the name of your project:",
-      validate: (input) =>
+      validate: (input: string) =>
         validateProjectName(input) === true || validateProjectName(input),
     },
     {
@@ -85,7 +90,10 @@ export async function promptUser() {
   ]);
 }
 
-export function installDependenciesAndConfigureTSConfig(projectPath, language) {
+export function installDependenciesAndConfigureTSConfig(
+  projectPath: string,
+  language: string,
+): void {
   execSync("npm init -y", { cwd: projectPath });
   console.log(chalk.green("Installing dependencies..."));
   execSync(`npm install ${BASE_DEPENDENCIES.join(" ")}`, {
@@ -108,7 +116,7 @@ export function installDependenciesAndConfigureTSConfig(projectPath, language) {
   }
 }
 
-export function createSourceFiles(projectPath, language) {
+export function createSourceFiles(projectPath: string, language: string): void {
   console.log(chalk.green("Creating source files..."));
   const ext = language === "TypeScript" ? "ts" : "js";
   fs.writeFileSync(path.join(projectPath, `src/app.${ext}`), getAppTemplate());
@@ -119,7 +127,7 @@ export function createSourceFiles(projectPath, language) {
   console.log(chalk.blue("Source files created."));
 }
 
-export function updatePackage(projectPath, language) {
+export function updatePackage(projectPath: string, language: string): void {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   console.log(chalk.green("Creating scripts in package.json..."));
@@ -130,13 +138,13 @@ export function updatePackage(projectPath, language) {
   console.log(chalk.blue("Scripts in package.json created."));
 }
 
-export function getAvailableCommands(projectPath) {
+export function getAvailableCommands(projectPath: string): void {
   const packageJson = JSON.parse(
     fs.readFileSync(path.join(projectPath, "package.json"), "utf-8"),
   );
   const scripts = packageJson.scripts;
   console.log(chalk.blue(`Available commands:`));
-  Object.keys(scripts).forEach((script) => {
+  Object.keys(scripts).forEach((script: string) => {
     console.log(chalk.blue(`- npm run ${script}: ${scripts[script]}`));
   });
 }

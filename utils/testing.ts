@@ -8,9 +8,9 @@ import {
   TEST_CONFIG,
   TEST_DEPENDENCIES,
   TEST_TS_DEPENDENCIES,
-} from "./constants.js";
+} from "./constants";
 
-export function configureTesting(projectPath, language) {
+export function configureTesting(projectPath: string, language: string): void {
   console.log(
     chalk.green(
       "Installing required testing dependencies (jest and supertest)...",
@@ -33,7 +33,7 @@ export function configureTesting(projectPath, language) {
   console.log(chalk.blue("Scripts in package.json created."));
 }
 
-function updateTsConfig(projectPath) {
+function updateTsConfig(projectPath: string): void {
   const tsconfigPath = path.join(projectPath, "tsconfig.json");
   const tsconfig = JSON.parse(
     fs
@@ -46,7 +46,7 @@ function updateTsConfig(projectPath) {
   fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 }
 
-function updateTestScripts(projectPath, language) {
+function updateTestScripts(projectPath: string, language: string): void {
   const packageJsonPath = path.join(projectPath, "package.json");
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
   console.log(chalk.yellow("Creating test scripts in package.json..."));

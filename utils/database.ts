@@ -4,10 +4,14 @@ import path from "path";
 import { execSync } from "child_process";
 
 //local imports
-import { getMongoDBTemplate, getSQLTemplate } from "./utils.js";
-import { SQLURI } from "./constants.js";
+import { getMongoDBTemplate, getSQLTemplate } from "./utils";
+import { SQLURI } from "./constants";
 
-export function connectDatabase(projectPath, database, language) {
+export function connectDatabase(
+  projectPath: string,
+  database: string,
+  language: string,
+): void {
   const ext = language === "TypeScript" ? "ts" : "js";
   switch (database) {
     case "MongoDB":
@@ -30,7 +34,11 @@ export function connectDatabase(projectPath, database, language) {
   console.log(chalk.blue("Database connection files created."));
 }
 
-function getDatabaseTemplate(projectPath, database, language) {
+function getDatabaseTemplate(
+  projectPath: string,
+  database: string,
+  language: string,
+): string {
   switch (database) {
     case "MongoDB":
       console.log(chalk.green("Installing Mongoose..."));

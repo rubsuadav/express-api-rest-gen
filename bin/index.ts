@@ -11,13 +11,13 @@ import {
   promptUser,
   updatePackage,
   getAvailableCommands,
-} from "../main.js";
-import { FOLDERS } from "../utils/constants.js";
-import { checkProjectExists, createFolders } from "../utils/utils.js";
-import { connectDatabase } from "../utils/database.js";
-import { configureTesting } from "../utils/testing.js";
+} from "../main";
+import { FOLDERS } from "../utils/constants";
+import { checkProjectExists, createFolders } from "../utils/utils";
+import { connectDatabase } from "../utils/database";
+import { configureTesting } from "../utils/testing";
 
-async function generateProject() {
+async function generateProject(): Promise<void> {
   const { projectName, language, database, testing } = await promptUser();
   const projectPath = path.join(process.cwd(), projectName);
 
@@ -45,12 +45,12 @@ async function generateProject() {
   getAvailableCommands(projectPath);
 }
 
-async function main() {
+async function main(): Promise<void> {
   await handleVersionFlag();
   try {
     await generateProject();
   } catch (error) {
-    console.error(chalk.red("Error generating the project:", error));
+    console.error(chalk.red("Error generating project:"), error);
     process.exit(1);
   }
 }

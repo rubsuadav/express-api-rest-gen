@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 
-export function validateProjectName(name) {
+export function validateProjectName(name: string): boolean | string {
   // npm package names can only contain lowercase letters, numbers, hyphens, and underscores
   // Pattern: /^[a-z0-9_-]+$/i allows letters, numbers, hyphens, and underscores
   const validNamePattern = /^[a-z0-9_-]+$/i;
@@ -18,7 +18,10 @@ export function validateProjectName(name) {
   return true;
 }
 
-export function checkProjectExists(projectPath, projectName) {
+export function checkProjectExists(
+  projectPath: string,
+  projectName: string,
+): boolean {
   if (fs.existsSync(projectPath)) {
     console.log(chalk.red(`Project ${projectName} already exists.`));
     return true;
@@ -26,15 +29,15 @@ export function checkProjectExists(projectPath, projectName) {
   return false;
 }
 
-export function createFolders(basePath, folders) {
-  folders.forEach((folder) => {
+export function createFolders(basePath: string, folders: string[]): void {
+  folders.forEach((folder: string) => {
     console.log(chalk.green(`Creating folder: ${folder}`));
     fs.mkdirSync(path.join(basePath, folder), { recursive: true });
   });
   console.log(chalk.blue("Folders created successfully."));
 }
 
-export function getAppTemplate() {
+export function getAppTemplate(): string {
   return (
     `import express from "express";\n` +
     `import morgan from "morgan";\n` +
@@ -48,13 +51,13 @@ export function getAppTemplate() {
   );
 }
 
-export function getIndexTemplate(language) {
+export function getIndexTemplate(language: string): string {
   return language === "TypeScript"
     ? `import app from "./app";\n\nimport { connectToDatabase } from "../database";\n\nconst PORT = 3000;\n\nconnectToDatabase();\n\napp.listen(PORT, () => {\n  console.log(\`Server is running on http://localhost:\${PORT}\`);\n});`
     : `import app from "./app.js";\n\nimport { connectToDatabase } from "../database.js";\n\nconst PORT = 3000;\n\nconnectToDatabase();\n\napp.listen(PORT, () => {\n  console.log(\`Server is running on http://localhost:\${PORT}\`);\n});`;
 }
 
-export function updatePackageJson(pkg, language) {
+export function updatePackageJson(pkg: any, language: string): any {
   if (pkg.scripts?.test) delete pkg.scripts.test;
 
   if (language === "TypeScript") {
@@ -75,7 +78,7 @@ export function updatePackageJson(pkg, language) {
   return pkg;
 }
 
-export function getMongoDBTemplate(language) {
+export function getMongoDBTemplate(language: string): string {
   console.log(chalk.green("Generating MongoDB connection template..."));
   return language === "TypeScript"
     ? `
@@ -108,7 +111,7 @@ export function getMongoDBTemplate(language) {
     }`;
 }
 
-export function getSQLTemplate(language) {
+export function getSQLTemplate(language: string): string {
   console.log(chalk.green("Generating connection template..."));
   return language === "TypeScript"
     ? `
