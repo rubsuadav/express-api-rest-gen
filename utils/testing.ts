@@ -10,7 +10,10 @@ import {
   TEST_TS_DEPENDENCIES,
 } from "./constants";
 
-export function configureTesting(projectPath: string, language: string): void {
+export async function configureTesting(
+  projectPath: string,
+  language: string,
+): Promise<void> {
   const spinnerDeps = ora({
     text: "Installing testing dependencies (jest and supertest)...",
     spinner: "speaker",
@@ -20,6 +23,7 @@ export function configureTesting(projectPath: string, language: string): void {
     execSync(`npm i -D ${TEST_DEPENDENCIES.join(" ")}`, {
       cwd: projectPath,
     });
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     spinnerDeps.succeed("Testing dependencies installed");
   } catch (error) {
     spinnerDeps.fail("Failed to install testing dependencies");
@@ -39,6 +43,7 @@ export function configureTesting(projectPath: string, language: string): void {
           cwd: projectPath,
         },
       );
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       spinnerTS.succeed("TypeScript testing dependencies installed");
     } catch (error) {
       spinnerTS.fail("Failed to install TypeScript testing dependencies");
@@ -47,7 +52,7 @@ export function configureTesting(projectPath: string, language: string): void {
     updateTsConfig(projectPath);
   }
 
-  updateTestScripts(projectPath, language);
+  await updateTestScripts(projectPath, language);
 }
 
 function updateTsConfig(projectPath: string): void {
@@ -63,7 +68,10 @@ function updateTsConfig(projectPath: string): void {
   fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 }
 
-function updateTestScripts(projectPath: string, language: string): void {
+async function updateTestScripts(
+  projectPath: string,
+  language: string,
+): Promise<void> {
   const spinner = ora({
     text: "Updating test scripts in package.json...",
     spinner: "speaker",
@@ -83,6 +91,7 @@ function updateTestScripts(projectPath: string, language: string): void {
           : `${TEST_CONFIG} --coverage`,
     };
     fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinner.succeed("Test scripts added to package.json");
   } catch (error) {
     spinner.fail("Failed to update test scripts");

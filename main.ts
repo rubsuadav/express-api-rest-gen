@@ -91,10 +91,10 @@ export async function promptUser(): Promise<{
   ]);
 }
 
-export function installDependenciesAndConfigureTSConfig(
+export async function installDependenciesAndConfigureTSConfig(
   projectPath: string,
   language: string,
-): void {
+): Promise<void> {
   const spinnerInit = ora({
     text: "Initializing npm project...",
     spinner: "speaker",
@@ -102,6 +102,7 @@ export function installDependenciesAndConfigureTSConfig(
   }).start();
   try {
     execSync("npm init -y", { cwd: projectPath });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinnerInit.succeed("Project initialized");
   } catch (error) {
     spinnerInit.fail("Failed to initialize project");
@@ -120,6 +121,7 @@ export function installDependenciesAndConfigureTSConfig(
     execSync(`npm install --save-dev ${DEV_DEPENDENCIES.join(" ")}`, {
       cwd: projectPath,
     });
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     spinnerDeps.succeed("Dependencies installed");
   } catch (error) {
     spinnerDeps.fail("Failed to install dependencies");
@@ -136,6 +138,7 @@ export function installDependenciesAndConfigureTSConfig(
       execSync(`npm install --save-dev ${TS_DEPENDENCIES.join(" ")}`, {
         cwd: projectPath,
       });
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       spinnerTS.succeed("TypeScript dependencies installed");
     } catch (error) {
       spinnerTS.fail("Failed to install TypeScript dependencies");
@@ -152,6 +155,7 @@ export function installDependenciesAndConfigureTSConfig(
         "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
         { cwd: projectPath },
       );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       spinnerTSConfig.succeed("TypeScript configured");
     } catch (error) {
       spinnerTSConfig.fail("Failed to configure TypeScript");
@@ -160,7 +164,10 @@ export function installDependenciesAndConfigureTSConfig(
   }
 }
 
-export function createSourceFiles(projectPath: string, language: string): void {
+export async function createSourceFiles(
+  projectPath: string,
+  language: string,
+): Promise<void> {
   const spinner = ora({
     text: "Creating source files...",
     spinner: "speaker",
@@ -176,6 +183,7 @@ export function createSourceFiles(projectPath: string, language: string): void {
       path.join(projectPath, `src/index.${ext}`),
       getIndexTemplate(language),
     );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinner.succeed("Source files created");
   } catch (error) {
     spinner.fail("Failed to create source files");
@@ -183,7 +191,10 @@ export function createSourceFiles(projectPath: string, language: string): void {
   }
 }
 
-export function updatePackage(projectPath: string, language: string): void {
+export async function updatePackage(
+  projectPath: string,
+  language: string,
+): Promise<void> {
   const spinner = ora({
     text: "Creating scripts in package.json...",
     spinner: "speaker",
@@ -196,6 +207,7 @@ export function updatePackage(projectPath: string, language: string): void {
       packageJsonPath,
       JSON.stringify(updatePackageJson(pkg, language), null, 2),
     );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinner.succeed("Scripts in package.json created");
   } catch (error) {
     spinner.fail("Failed to create scripts in package.json");

@@ -30,7 +30,10 @@ export function checkProjectExists(
   return false;
 }
 
-export function createFolders(basePath: string, folders: string[]): void {
+export async function createFolders(
+  basePath: string,
+  folders: string[],
+): Promise<void> {
   const spinner = ora({
     text: "Creating project structure...",
     spinner: "speaker",
@@ -40,6 +43,7 @@ export function createFolders(basePath: string, folders: string[]): void {
     folders.forEach((folder: string) => {
       fs.mkdirSync(path.join(basePath, folder), { recursive: true });
     });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinner.succeed("Project structure created successfully");
   } catch (error) {
     spinner.fail("Failed to create project structure");
@@ -88,7 +92,7 @@ export function updatePackageJson(pkg: any, language: string): any {
   return pkg;
 }
 
-export function getMongoDBTemplate(language: string): string {
+export async function getMongoDBTemplate(language: string): Promise<string> {
   const spinner = ora({
     text: "Generating MongoDB connection template...",
     spinner: "speaker",
@@ -124,11 +128,12 @@ export function getMongoDBTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`;
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   spinner.succeed("MongoDB template generated");
   return text;
 }
 
-export function getSQLTemplate(language: string): string {
+export async function getSQLTemplate(language: string): Promise<string> {
   const spinner = ora({
     text: "Generating SQL connection template...",
     spinner: "speaker",
@@ -162,6 +167,7 @@ export function getSQLTemplate(language: string): string {
         console.error('Cannot connect to the database');
       }
     }`;
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   spinner.succeed("SQL template generated");
   return text;
 }

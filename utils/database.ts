@@ -7,11 +7,11 @@ import ora from "ora";
 import { getMongoDBTemplate, getSQLTemplate } from "./utils";
 import { SQLURI } from "./constants";
 
-export function connectDatabase(
+export async function connectDatabase(
   projectPath: string,
   database: string,
   language: string,
-): void {
+): Promise<void> {
   const spinner = ora({
     text: `Configuring ${database} database...`,
     spinner: "speaker",
@@ -35,19 +35,20 @@ export function connectDatabase(
         fs.writeFileSync(path.join(projectPath, `.env`), `URI=mysql${SQLURI}`);
         break;
     }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     spinner.succeed("Database config file created");
-    getDatabaseTemplate(projectPath, database, language);
+    await getDatabaseTemplate(projectPath, database, language);
   } catch (error) {
     spinner.fail("Failed to configure database");
     spinner.stop();
   }
 }
 
-function getDatabaseTemplate(
+async function getDatabaseTemplate(
   projectPath: string,
   database: string,
   language: string,
-): void {
+): Promise<void> {
   const ext = language === "TypeScript" ? "ts" : "js";
 
   switch (database) {
@@ -59,6 +60,7 @@ function getDatabaseTemplate(
       }).start();
       try {
         execSync(`npm i mongoose`, { cwd: projectPath });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         spinnerMongo.succeed("Mongoose installed");
       } catch (error) {
         spinnerMongo.fail("Failed to install Mongoose");
@@ -66,7 +68,7 @@ function getDatabaseTemplate(
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),
-        getMongoDBTemplate(language),
+        await getMongoDBTemplate(language),
       );
       break;
     case "PostgreSQL":
@@ -77,6 +79,7 @@ function getDatabaseTemplate(
       }).start();
       try {
         execSync(`npm i pg pg-hstore sequelize`, { cwd: projectPath });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         spinnerPostgres.succeed("PostgreSQL driver and sequelize installed");
       } catch (error) {
         spinnerPostgres.fail("Failed to install PostgreSQL dependencies");
@@ -84,7 +87,7 @@ function getDatabaseTemplate(
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),
-        getSQLTemplate(language),
+        await getSQLTemplate(language),
       );
       break;
     case "MySQL":
@@ -95,6 +98,7 @@ function getDatabaseTemplate(
       }).start();
       try {
         execSync(`npm i mysql2 sequelize`, { cwd: projectPath });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         spinnerMySQL.succeed("MySQL driver and sequelize installed");
       } catch (error) {
         spinnerMySQL.fail("Failed to install MySQL dependencies");
@@ -102,7 +106,7 @@ function getDatabaseTemplate(
       }
       fs.writeFileSync(
         path.join(projectPath, `database.${ext}`),
-        getSQLTemplate(language),
+        await getSQLTemplate(language),
       );
       break;
   }

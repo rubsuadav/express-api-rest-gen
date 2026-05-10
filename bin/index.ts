@@ -23,12 +23,12 @@ async function generateProject(): Promise<void> {
 
   if (checkProjectExists(projectPath, projectName)) return;
 
-  createFolders(projectPath, FOLDERS);
-  createSourceFiles(projectPath, language);
-  installDependenciesAndConfigureTSConfig(projectPath, language);
-  updatePackage(projectPath, language);
-  connectDatabase(projectPath, database, language);
-  testing === "Yes" ? configureTesting(projectPath, language) : null;
+  await createFolders(projectPath, FOLDERS);
+  await createSourceFiles(projectPath, language);
+  await installDependenciesAndConfigureTSConfig(projectPath, language);
+  await updatePackage(projectPath, language);
+  await connectDatabase(projectPath, database, language);
+  testing === "Yes" ? await configureTesting(projectPath, language) : null;
   console.log(
     chalk.green(
       `API ${projectName} created with Express and (${language}) successfully`,
