@@ -46,7 +46,7 @@ async function generateProject() {
 }
 
 async function main() {
-  handleVersionFlag();
+  await handleVersionFlag();
   try {
     await generateProject();
   } catch (error) {
