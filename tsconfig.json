@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "./build",
     "module": "commonjs",
     "target": "es6",
+    "moduleResolution": "bundler",
     "types": ["node"],
     "sourceMap": true,
     "declaration": true,
