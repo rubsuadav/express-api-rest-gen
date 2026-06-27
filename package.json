@@ -2,8 +2,8 @@
   "name": "express-api-rest-gen",
   "type": "commonjs",
   "scripts": {
-    "build": "npx tsc",
-    "start": "npm run build && node build/bin/index.js",
+    "build": "tsc",
+    "start": "npm run build && node dist/bin/index.js",
     "dev": "tsx bin/index.ts",
     "test": "jest --coverage"
   },
