@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["**/*.ts"], // only include ts files in the tests folder
+  "exclude": [],
+}
