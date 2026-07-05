@@ -70,7 +70,7 @@ describe("handleVersionFlag", () => {
         "A new version (1.3.0) is available!",
       );
       expect(execSync).toHaveBeenCalledWith(
-        "npm i -g express-api-rest-gen@latest",
+        "npmd i -g express-api-rest-gen@latest",
       );
       expect(logSpy).toHaveBeenCalledWith("Updating to version 1.3.0...");
       expect(logSpy).toHaveBeenCalledWith("Successfully updated to 1.3.0!");
