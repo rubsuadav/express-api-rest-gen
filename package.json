@@ -2,16 +2,17 @@
   "name": "express-api-rest-gen",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc",
     "start": "npm run build && node dist/bin/index.js",
     "dev": "tsx bin/index.ts",
     "test": "jest --coverage"
   },
   "bin": {
-    "express-api-rest-gen": "bin/index.ts"
+    "express-api-rest-gen": "dist/bin/index.js"
   },
   "version": "4.8.0",
-  "main": "bin/index.ts",
+  "main": "dist/bin/index.js",
   "keywords": [
     "express",
     "api",
@@ -19,11 +20,9 @@
     "generator"
   ],
   "files": [
+    "dist",
     "README.md",
-    "bin/*",
-    "cli/*",
-    "utils/*",
-    "tsconfig.json"
+    "package.json"
   ],
   "repository": {
     "url": "https://github.com/rubsuadav/express-api-rest-gen",

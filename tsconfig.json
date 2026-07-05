@@ -1,4 +1,6 @@
 {
+  "include": ["bin/**/*.ts", "cli/**/*.ts", "utils/**/*.ts"],
+  "exclude": ["dist", "tests", "coverage", "node_modules"],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./dist",
