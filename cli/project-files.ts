@@ -2,8 +2,16 @@ import fs from "fs";
 import path from "path";
 import ora from "ora";
 
-import { BASE_DEPENDENCIES, DEV_DEPENDENCIES, TS_DEPENDENCIES } from "../utils/constants";
-import { getAppTemplate, getIndexTemplate, updatePackageJson } from "../utils/utils";
+import {
+  BASE_DEPENDENCIES,
+  DEV_DEPENDENCIES,
+  TS_DEPENDENCIES,
+} from "../utils/constants";
+import {
+  getAppTemplate,
+  getIndexTemplate,
+  updatePackageJson,
+} from "../utils/utils";
 
 export async function installDependenciesAndConfigureTSConfig(
   projectPath: string,
@@ -68,7 +76,7 @@ export async function installDependenciesAndConfigureTSConfig(
     }).start();
     try {
       execSync(
-        "npx tsc --init --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false",
+        "npx tsc --init --rootDir . --outDir ./build --module commonjs --target es6 --esModuleInterop --verbatimModuleSyntax false --declarationDir ./build/types",
         { cwd: projectPath },
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
