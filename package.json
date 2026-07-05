@@ -20,7 +20,9 @@
     "generator"
   ],
   "files": [
-    "dist",
+    "bin",
+    "cli",
+    "utils",
     "README.md",
     "package.json"
   ],
