@@ -11,7 +11,7 @@
   "bin": {
     "express-api-rest-gen": "dist/bin/index.js"
   },
-  "version": "4.8.3",
+  "version": "4.8.4",
   "main": "dist/bin/index.js",
   "keywords": [
     "express",
