@@ -8,10 +8,10 @@
     "test": "jest --coverage"
   },
   "bin": {
-    "express-api-rest-gen": "bin/index.ts"
+    "express-api-rest-gen": "dist/bin/index.js"
   },
   "version": "4.7.2",
-  "main": "bin/index.ts",
+  "main": "dist/bin/index.js",
   "keywords": [
     "express",
     "api",
@@ -20,9 +20,7 @@
   ],
   "files": [
     "README.md",
-    "bin/index.ts",
-    "utils/**/*.ts",
-    "main.ts",
+    "dist/**/*",
     "tsconfig.json"
   ],
   "repository": {
