@@ -10,7 +10,7 @@
   "bin": {
     "express-api-rest-gen": "bin/index.ts"
   },
-  "version": "4.7.2",
+  "version": "4.8.0",
   "main": "bin/index.ts",
   "keywords": [
     "express",
