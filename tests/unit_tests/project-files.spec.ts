@@ -103,11 +103,11 @@ describe("createSourceFiles", () => {
     await createSourceFiles("/project", "TypeScript");
 
     expect(writeFileSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining("src\\app.ts"),
+      expect.stringMatching(/src[\\/]app\.ts$/),
       "app-template",
     );
     expect(writeFileSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining("src\\index.ts"),
+      expect.stringMatching(/src[\\/]index\.ts$/),
       "index-template",
     );
   });
@@ -120,11 +120,11 @@ describe("createSourceFiles", () => {
     await createSourceFiles("/project", "JavaScript");
 
     expect(writeFileSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining("src\\app.js"),
+      expect.stringMatching(/src[\\/]app\.js$/),
       "app-template",
     );
     expect(writeFileSyncMock).toHaveBeenCalledWith(
-      expect.stringContaining("src\\index.js"),
+      expect.stringMatching(/src[\\/]index\.js$/),
       "index-template",
     );
   });
