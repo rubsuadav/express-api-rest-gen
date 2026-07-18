@@ -6,7 +6,7 @@
     "build": "npm run clean && tsc",
     "start": "npm run build && node dist/bin/index.js",
     "dev": "tsx bin/index.ts",
-    "test": "node --experimental-strip-types --test \"**/*.{spec,integration}.ts\""
+    "test": "node --experimental-strip-types --experimental-test-coverage --test \"**/*.{spec,integration}.ts\""
   },
   "bin": {
     "express-api-rest-gen": "dist/bin/index.js"
