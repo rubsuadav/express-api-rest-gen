@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 
-import { validateProjectName } from "../utils/utils";
+import { validateProjectName } from "../utils/utils.ts";
 
 export async function promptUser(): Promise<{
   projectName: string;

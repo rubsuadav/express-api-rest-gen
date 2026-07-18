@@ -1,9 +1,9 @@
-export { validateProjectName } from "./validation";
-export { checkProjectExists, createFolders } from "./filesystem";
+export { validateProjectName } from "./validation.ts";
+export { checkProjectExists, createFolders } from "./filesystem.ts";
 export {
   getAppTemplate,
   getIndexTemplate,
   getMongoDBTemplate,
   getSQLTemplate,
-} from "./templates";
-export { updatePackageJson } from "./package-json";
+} from "./templates.ts";
+export { updatePackageJson } from "./package-json.ts";

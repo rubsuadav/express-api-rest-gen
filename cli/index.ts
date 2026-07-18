@@ -1,7 +1,7 @@
 import chalk from "chalk";
 
-import { generateProject } from "./project";
-import { handleVersionFlag } from "./version";
+import { generateProject } from "./project.ts";
+import { handleVersionFlag } from "./version.ts";
 
 export async function runCli(): Promise<void> {
   await handleVersionFlag();

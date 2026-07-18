@@ -6,12 +6,12 @@ import {
   BASE_DEPENDENCIES,
   DEV_DEPENDENCIES,
   TS_DEPENDENCIES,
-} from "../utils/constants";
+} from "../utils/constants.ts";
 import {
   getAppTemplate,
   getIndexTemplate,
   updatePackageJson,
-} from "../utils/utils";
+} from "../utils/utils.ts";
 
 export async function installDependenciesAndConfigureTSConfig(
   projectPath: string,

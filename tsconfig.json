@@ -4,10 +4,12 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./dist",
-    "module": "commonjs",
+    "module": "nodenext",
     "target": "es6",
-    "moduleResolution": "bundler",
-    "types": ["node", "jest"],
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,          /* Allows imports ending in .ts for direct TypeScript execution in tests */
+    "rewriteRelativeImportExtensions": true,     /* Rewrites relative .ts imports to .js when emitting build artifacts */
+    "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

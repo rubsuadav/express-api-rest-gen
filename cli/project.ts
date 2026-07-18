@@ -1,17 +1,17 @@
 import path from "path";
 import chalk from "chalk";
 
-import { FOLDERS } from "../utils/constants";
-import { checkProjectExists, createFolders } from "../utils/utils";
-import { connectDatabase } from "../utils/database";
-import { configureTesting } from "../utils/testing";
+import { FOLDERS } from "../utils/constants.ts";
+import { checkProjectExists, createFolders } from "../utils/utils.ts";
+import { connectDatabase } from "../utils/database.ts";
+import { configureTesting } from "../utils/testing.ts";
 import {
   createSourceFiles,
   getAvailableCommands,
   installDependenciesAndConfigureTSConfig,
   updatePackage,
-} from "./project-files";
-import { promptUser } from "./prompts";
+} from "./project-files.ts";
+import { promptUser } from "./prompts.ts";
 
 export async function generateProject(): Promise<void> {
   const { projectName, language, database, testing } = await promptUser();

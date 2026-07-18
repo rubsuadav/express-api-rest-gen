@@ -8,7 +8,7 @@ import {
   TEST_CONFIG,
   TEST_DEPENDENCIES,
   TEST_TS_DEPENDENCIES,
-} from "./constants";
+} from "./constants.ts";
 
 export async function configureTesting(
   projectPath: string,

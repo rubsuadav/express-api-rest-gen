@@ -4,8 +4,8 @@ import { execSync } from "child_process";
 import ora from "ora";
 
 //local imports
-import { getMongoDBTemplate, getSQLTemplate } from "./utils";
-import { SQLURI } from "./constants";
+import { getMongoDBTemplate, getSQLTemplate } from "./utils.ts";
+import { SQLURI } from "./constants.ts";
 
 export async function connectDatabase(
   projectPath: string,
