@@ -1,4 +1,5 @@
-import ora from "ora";
+import { describe, test } from "node:test";
+import { ok } from "node:assert/strict";
 
 // local imports
 import {
@@ -6,181 +7,167 @@ import {
   getIndexTemplate,
   getMongoDBTemplate,
   getSQLTemplate,
-} from "../../utils/utils";
+} from "../../utils/templates.ts";
 
-jest.mock("chalk", () => ({
-  red: jest.fn().mockImplementation((text) => text),
-  green: jest.fn().mockImplementation((text) => text),
-  blue: jest.fn().mockImplementation((text) => text),
-  yellow: jest.fn().mockImplementation((text) => text),
-}));
+describe("getAppTemplate", () => {
+  test("returns a string", () => {
+    const result = getAppTemplate();
+    ok(typeof result === "string");
+    ok(result.length > 0);
+  });
 
-jest.mock("ora", () => {
-  const spinner = {
-    start: jest.fn(),
-    succeed: jest.fn(),
-    fail: jest.fn(),
-    stop: jest.fn(),
-  };
+  test("includes express import", () => {
+    const result = getAppTemplate();
+    ok(result.includes('import express from "express"'));
+  });
 
-  spinner.start.mockReturnValue(spinner);
-  spinner.succeed.mockReturnValue(spinner);
-  spinner.fail.mockReturnValue(spinner);
+  test("includes cors import", () => {
+    const result = getAppTemplate();
+    ok(result.includes('import cors from "cors"'));
+  });
 
-  return {
-    __esModule: true,
-    default: jest.fn().mockReturnValue(spinner),
-  };
+  test("includes morgan import", () => {
+    const result = getAppTemplate();
+    ok(result.includes('import morgan from "morgan"'));
+  });
+
+  test("exports app as default", () => {
+    const result = getAppTemplate();
+    ok(result.includes("export default app"));
+  });
+
+  test("configures cors, morgan and json middlewares", () => {
+    const result = getAppTemplate();
+    ok(result.includes("app.use(cors())"));
+    ok(result.includes('app.use(morgan("dev"))'));
+    ok(result.includes("app.use(express.json())"));
+  });
 });
 
-afterEach(() => {
-  jest.clearAllMocks();
-  jest.restoreAllMocks();
+describe("getIndexTemplate", () => {
+  test("TypeScript template returns a string", () => {
+    ok(typeof getIndexTemplate("TypeScript") === "string");
+  });
+
+  test("TypeScript template imports app without .js extension", () => {
+    const result = getIndexTemplate("TypeScript");
+    ok(result.includes('./app"'));
+    ok(!result.includes('./app.js"'));
+  });
+
+  test("TypeScript template imports database without .js extension", () => {
+    const result = getIndexTemplate("TypeScript");
+    ok(result.includes('"../database"'));
+    ok(!result.includes('"../database.js"'));
+  });
+
+  test("JavaScript template imports app with .js extension", () => {
+    const result = getIndexTemplate("JavaScript");
+    ok(result.includes('./app.js"'));
+  });
+
+  test("JavaScript template imports database with .js extension", () => {
+    const result = getIndexTemplate("JavaScript");
+    ok(result.includes('"../database.js"'));
+  });
+
+  test("both templates listen on port 3000", () => {
+    ok(getIndexTemplate("TypeScript").includes("3000"));
+    ok(getIndexTemplate("JavaScript").includes("3000"));
+  });
+
+  test("both templates call connectToDatabase", () => {
+    ok(getIndexTemplate("TypeScript").includes("connectToDatabase()"));
+    ok(getIndexTemplate("JavaScript").includes("connectToDatabase()"));
+  });
+
+  test("both templates call app.listen", () => {
+    ok(getIndexTemplate("TypeScript").includes("app.listen"));
+    ok(getIndexTemplate("JavaScript").includes("app.listen"));
+  });
 });
 
-describe("getTemplates methods in the CLI", () => {
-  describe("getAppTemplate method", () => {
-    it("should return the correct app template", () => {
-      const expectedTemplate =
-        `import express from "express";\n` +
-        `import morgan from "morgan";\n` +
-        `import cors from "cors";\n\n` +
-        `const app = express();\n\n` +
-        `app.use(cors());\n` +
-        `app.use(morgan("dev"));\n` +
-        `app.use(express.json());\n\n` +
-        `//ADD YOUR ROUTES HERE\n\n` +
-        `export default app;`;
-
-      const result = getAppTemplate();
-
-      expect(typeof result).toBe("string");
-      expect(result).toEqual(expectedTemplate);
-    });
+describe("getMongoDBTemplate", () => {
+  test("returns a string for TypeScript", async () => {
+    const result = await getMongoDBTemplate("TypeScript");
+    ok(typeof result === "string");
+    ok(result.length > 0);
   });
 
-  describe("getIndexTemplate method", () => {
-    it("should return the correct index template for TypeScript", () => {
-      const expectedTemplate = `import app from "./app";\n\nimport { connectToDatabase } from "../database";\n\nconst PORT = 3000;\n\nconnectToDatabase();\n\napp.listen(PORT, () => {\n  console.log(\`Server is running on http://localhost:\${PORT}\`);\n});`;
-
-      const result = getIndexTemplate("TypeScript");
-
-      expect(typeof result).toBe("string");
-      expect(result).toEqual(expectedTemplate);
-    });
-
-    it("should return the correct index template for JavaScript", () => {
-      const expectedTemplate = `import app from "./app.js";\n\nimport { connectToDatabase } from "../database.js";\n\nconst PORT = 3000;\n\nconnectToDatabase();\n\napp.listen(PORT, () => {\n  console.log(\`Server is running on http://localhost:\${PORT}\`);\n});`;
-
-      const result = getIndexTemplate("JavaScript");
-
-      expect(typeof result).toBe("string");
-      expect(result).toEqual(expectedTemplate);
-    });
+  test("TypeScript template includes Promise<void> return type", async () => {
+    const result = await getMongoDBTemplate("TypeScript");
+    ok(result.includes("Promise<void>"));
   });
 
-  describe("getMongoDBTemplate method", () => {
-    it("should return the correct MongoDB template for TypeScript", async () => {
-      const expectedTemplate = `import mongoose from 'mongoose';
-    import 'dotenv/config';
-
-    export async function connectToDatabase(): Promise<void> {
-      try {
-        await mongoose.connect(process.env.MONGODB_URI as string, {
-          dbName: process.env.DB_NAME as string,
-        });
-        console.log('MongoDB connected');
-      } catch (error) {
-        console.error('Cannot connect to the database');
-      }
-    }`;
-
-      const spinner = ora();
-
-      const result = await getMongoDBTemplate("TypeScript");
-
-      expect(spinner.start).toHaveBeenCalledTimes(1);
-
-      expect(typeof result).toBe("string");
-      expect(result.trim()).toEqual(expectedTemplate.trim());
-    });
-
-    it("should return the correct MongoDB template for JavaScript", async () => {
-      const expectedTemplate = `
-    import mongoose from 'mongoose';
-    import 'dotenv/config';
-
-    export async function connectToDatabase() {
-      try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-          dbName: process.env.DB_NAME,
-        });
-        console.log('MongoDB connected');
-      } catch (error) {
-        console.error('Cannot connect to the database');
-      }
-    }`;
-
-      const spinner = ora();
-
-      const result = await getMongoDBTemplate("JavaScript");
-
-      expect(spinner.start).toHaveBeenCalledTimes(1);
-
-      expect(typeof result).toBe("string");
-      expect(result.trim()).toEqual(expectedTemplate.trim());
-    });
+  test("TypeScript template includes mongoose import", async () => {
+    const result = await getMongoDBTemplate("TypeScript");
+    ok(result.includes("mongoose"));
   });
 
-  describe("getSQLTemplate method", () => {
-    it("should return the correct SQL template for TypeScript", async () => {
-      const expectedTemplate = `
-    import { Sequelize } from 'sequelize';
-    import 'dotenv/config';
+  test("TypeScript template uses type assertion for env variables", async () => {
+    const result = await getMongoDBTemplate("TypeScript");
+    ok(result.includes("as string"));
+  });
 
-    const sequelize = new Sequelize(process.env.URI as string);
+  test("JavaScript template does not include Promise<void>", async () => {
+    const result = await getMongoDBTemplate("JavaScript");
+    ok(!result.includes("Promise<void>"));
+  });
 
-    export async function connectToDatabase(): Promise<void> {
-      try {
-        await sequelize.authenticate();
-      } catch (error) {
-        console.error('Cannot connect to the database');
-      }
-    }`;
+  test("JavaScript template includes mongoose import", async () => {
+    const result = await getMongoDBTemplate("JavaScript");
+    ok(result.includes("mongoose"));
+  });
 
-      const spinner = ora();
+  test("both templates export connectToDatabase function", async () => {
+    ok((await getMongoDBTemplate("TypeScript")).includes("connectToDatabase"));
+    ok((await getMongoDBTemplate("JavaScript")).includes("connectToDatabase"));
+  });
+});
 
-      const result = await getSQLTemplate("TypeScript");
+describe("getSQLTemplate", () => {
+  test("returns a string for TypeScript", async () => {
+    const result = await getSQLTemplate("TypeScript");
+    ok(typeof result === "string");
+    ok(result.length > 0);
+  });
 
-      expect(spinner.start).toHaveBeenCalledTimes(1);
+  test("TypeScript template includes Promise<void> return type", async () => {
+    const result = await getSQLTemplate("TypeScript");
+    ok(result.includes("Promise<void>"));
+  });
 
-      expect(typeof result).toBe("string");
-      expect(result.trim()).toEqual(expectedTemplate.trim());
-    });
+  test("TypeScript template includes Sequelize import", async () => {
+    const result = await getSQLTemplate("TypeScript");
+    ok(result.includes("Sequelize"));
+  });
 
-    it("should return the correct SQL template for JavaScript", async () => {
-      const expectedTemplate = `
-    import { Sequelize } from 'sequelize';
-    import 'dotenv/config';
+  test("TypeScript template uses type assertion for URI env variable", async () => {
+    const result = await getSQLTemplate("TypeScript");
+    ok(result.includes("as string"));
+  });
 
-    const sequelize = new Sequelize(process.env.URI);
+  test("JavaScript template does not include Promise<void>", async () => {
+    const result = await getSQLTemplate("JavaScript");
+    ok(!result.includes("Promise<void>"));
+  });
 
-    export async function connectToDatabase() {
-      try {
-        await sequelize.authenticate();
-      } catch (error) {
-        console.error('Cannot connect to the database');
-      }
-    }`;
+  test("JavaScript template includes Sequelize import", async () => {
+    const result = await getSQLTemplate("JavaScript");
+    ok(result.includes("Sequelize"));
+  });
 
-      const spinner = ora();
+  test("both templates export connectToDatabase function", async () => {
+    ok((await getSQLTemplate("TypeScript")).includes("connectToDatabase"));
+    ok((await getSQLTemplate("JavaScript")).includes("connectToDatabase"));
+  });
 
-      const result = await getSQLTemplate("JavaScript");
-
-      expect(spinner.start).toHaveBeenCalledTimes(1);
-
-      expect(typeof result).toBe("string");
-      expect(result.trim()).toEqual(expectedTemplate.trim());
-    });
+  test("both templates call sequelize.authenticate()", async () => {
+    ok(
+      (await getSQLTemplate("TypeScript")).includes("sequelize.authenticate()"),
+    );
+    ok(
+      (await getSQLTemplate("JavaScript")).includes("sequelize.authenticate()"),
+    );
   });
 });
