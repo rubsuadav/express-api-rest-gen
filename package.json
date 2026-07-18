@@ -1,12 +1,12 @@
 {
   "name": "express-api-rest-gen",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "npm run clean && tsc",
     "start": "npm run build && node dist/bin/index.js",
     "dev": "tsx bin/index.ts",
-    "test": "jest --coverage"
+    "test": "node --experimental-strip-types --test \"**/*.{spec,integration}.ts\""
   },
   "bin": {
     "express-api-rest-gen": "dist/bin/index.js"
@@ -48,10 +48,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.8",
     "@semantic-release/npm": "^13.1.5",
-    "@types/jest": "^30.0.0",
     "@types/node": "^25.6.2",
-    "jest": "^30.4.2",
-    "ts-jest": "^29.4.11",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   }
