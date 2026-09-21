@@ -1,0 +1,13 @@
+src
+tests
+tsconfig.json
+.releaserc.json
+.github
+.vscode
+COMMIT_STRATEGY.md
+
+# Source maps and declaration maps
+*.map
+*.d.ts.map
+dist/**/*.map
+dist/**/*.d.ts.map
