@@ -2,7 +2,7 @@ import { describe, test } from "node:test";
 import { strictEqual, ok } from "node:assert";
 
 // local imports
-import { validateProjectName } from "../../utils/validation.ts";
+import { validateProjectName } from "../../src/utils/validation.ts";
 
 describe("validateProjectName", () => {
   test("returns error message for empty string", () => {

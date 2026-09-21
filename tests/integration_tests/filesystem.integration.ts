@@ -6,8 +6,11 @@ import path from "path";
 import os from "os";
 
 // local imports
-import { createFolders, checkProjectExists } from "../../utils/filesystem.ts";
-import { FOLDERS } from "../../utils/constants.ts";
+import {
+  createFolders,
+  checkProjectExists,
+} from "../../src/utils/filesystem.ts";
+import { FOLDERS } from "../../src/utils/constants.ts";
 
 describe("createFolders - creates all project src folders", () => {
   let tempDir: string;
@@ -24,10 +27,7 @@ describe("createFolders - creates all project src folders", () => {
     await createFolders(tempDir, FOLDERS);
     for (const folder of FOLDERS) {
       const folderPath = path.join(tempDir, folder);
-      ok(
-        fs.existsSync(folderPath),
-        `Expected folder to exist: ${folder}`
-      );
+      ok(fs.existsSync(folderPath), `Expected folder to exist: ${folder}`);
     }
   });
 
@@ -67,9 +67,7 @@ describe("checkProjectExists - real filesystem checks", () => {
   let existingDir: string;
 
   before(() => {
-    existingDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-exists-")
-    );
+    existingDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-exists-"));
   });
 
   after(() => {
@@ -84,7 +82,7 @@ describe("checkProjectExists - real filesystem checks", () => {
   test("returns false for a path that has never been created", () => {
     const ghostPath = path.join(
       os.tmpdir(),
-      `ghost-project-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      `ghost-project-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     const result = checkProjectExists(ghostPath, "ghost-project");
     strictEqual(result, false);
@@ -93,7 +91,7 @@ describe("checkProjectExists - real filesystem checks", () => {
   test("returns true after the directory is created and false after it is removed", () => {
     const dynamicDir = path.join(
       os.tmpdir(),
-      `dynamic-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      `dynamic-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
 
     // Does not exist yet

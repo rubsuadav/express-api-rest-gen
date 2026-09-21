@@ -10,7 +10,7 @@ import {
   createSourceFiles,
   updatePackage,
   getAvailableCommands,
-} from "../../cli/project-files.ts";
+} from "../../src/cli/project-files.ts";
 
 // ---------------------------------------------------------------------------
 // createSourceFiles – TypeScript
@@ -20,9 +20,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   let tempDir: string;
 
   before(async () => {
-    tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-src-ts-")
-    );
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-src-ts-"));
     fs.mkdirSync(path.join(tempDir, "src"), { recursive: true });
     await createSourceFiles(tempDir, "TypeScript");
   });
@@ -42,7 +40,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   test("app.ts contains express import", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "app.ts"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes("express"));
   });
@@ -50,7 +48,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   test("app.ts exports default app", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "app.ts"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes("export default app"));
   });
@@ -58,7 +56,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   test("index.ts imports app without .js extension", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "index.ts"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes('./app"'));
     ok(!content.includes('./app.js"'));
@@ -67,7 +65,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   test("index.ts imports database without .js extension", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "index.ts"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes('"../database"'));
     ok(!content.includes('"../database.js"'));
@@ -76,7 +74,7 @@ describe("createSourceFiles TypeScript - writes app.ts and index.ts", () => {
   test("index.ts references port 3000", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "index.ts"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes("3000"));
   });
@@ -90,9 +88,7 @@ describe("createSourceFiles JavaScript - writes app.js and index.js", () => {
   let tempDir: string;
 
   before(async () => {
-    tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-src-js-")
-    );
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-src-js-"));
     fs.mkdirSync(path.join(tempDir, "src"), { recursive: true });
     await createSourceFiles(tempDir, "JavaScript");
   });
@@ -112,7 +108,7 @@ describe("createSourceFiles JavaScript - writes app.js and index.js", () => {
   test("index.js imports app with .js extension", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "index.js"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes('./app.js"'));
   });
@@ -120,7 +116,7 @@ describe("createSourceFiles JavaScript - writes app.js and index.js", () => {
   test("index.js imports database with .js extension", () => {
     const content = fs.readFileSync(
       path.join(tempDir, "src", "index.js"),
-      "utf-8"
+      "utf-8",
     );
     ok(content.includes('"../database.js"'));
   });
@@ -134,9 +130,7 @@ describe("updatePackage TypeScript - updates package.json scripts", () => {
   let tempDir: string;
 
   before(async () => {
-    tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-pkg-ts-")
-    );
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-pkg-ts-"));
     const initialPkg = {
       name: "test-api",
       version: "1.0.0",
@@ -144,7 +138,7 @@ describe("updatePackage TypeScript - updates package.json scripts", () => {
     };
     fs.writeFileSync(
       path.join(tempDir, "package.json"),
-      JSON.stringify(initialPkg, null, 2)
+      JSON.stringify(initialPkg, null, 2),
     );
     await updatePackage(tempDir, "TypeScript");
   });
@@ -155,35 +149,35 @@ describe("updatePackage TypeScript - updates package.json scripts", () => {
 
   test("package.json contains build script", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.scripts.build, "npx tsc");
   });
 
   test("package.json start script runs through build", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     ok(pkg.scripts.start.includes("npm run build"));
   });
 
   test("package.json dev script uses nodemon", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     ok(pkg.scripts.dev.includes("nodemon"));
   });
 
   test("package.json removes the original test script", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.scripts.test, undefined);
   });
 
   test("package.json preserves the project name", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.name, "test-api");
   });
@@ -197,9 +191,7 @@ describe("updatePackage JavaScript - updates package.json scripts", () => {
   let tempDir: string;
 
   before(async () => {
-    tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-pkg-js-")
-    );
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-pkg-js-"));
     const initialPkg = {
       name: "test-api-js",
       version: "1.0.0",
@@ -207,7 +199,7 @@ describe("updatePackage JavaScript - updates package.json scripts", () => {
     };
     fs.writeFileSync(
       path.join(tempDir, "package.json"),
-      JSON.stringify(initialPkg, null, 2)
+      JSON.stringify(initialPkg, null, 2),
     );
     await updatePackage(tempDir, "JavaScript");
   });
@@ -218,28 +210,28 @@ describe("updatePackage JavaScript - updates package.json scripts", () => {
 
   test("package.json start script points to node src/index.js", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.scripts.start, "node src/index.js");
   });
 
   test("package.json dev script uses nodemon", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     ok(pkg.scripts.dev.includes("nodemon"));
   });
 
   test("package.json type is set to module", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.type, "module");
   });
 
   test("package.json removes the original test script", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8")
+      fs.readFileSync(path.join(tempDir, "package.json"), "utf-8"),
     );
     strictEqual(pkg.scripts.test, undefined);
   });
@@ -253,9 +245,7 @@ describe("getAvailableCommands - reads and prints scripts from package.json", ()
   let tempDir: string;
 
   before(() => {
-    tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-cmds-")
-    );
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "express-gen-cmds-"));
     const pkg = {
       name: "test-api",
       version: "1.0.0",
@@ -267,7 +257,7 @@ describe("getAvailableCommands - reads and prints scripts from package.json", ()
     };
     fs.writeFileSync(
       path.join(tempDir, "package.json"),
-      JSON.stringify(pkg, null, 2)
+      JSON.stringify(pkg, null, 2),
     );
   });
 
@@ -281,7 +271,7 @@ describe("getAvailableCommands - reads and prints scripts from package.json", ()
 
   test("throws when the directory does not contain a package.json", () => {
     const emptyDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "express-gen-no-pkg-")
+      path.join(os.tmpdir(), "express-gen-no-pkg-"),
     );
     try {
       throws(() => getAvailableCommands(emptyDir));

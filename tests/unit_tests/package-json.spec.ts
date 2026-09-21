@@ -2,7 +2,7 @@ import { describe, test } from "node:test";
 import { strictEqual, ok } from "node:assert";
 
 // local imports
-import { updatePackageJson } from "../../utils/package-json.ts";
+import { updatePackageJson } from "../../src/utils/package-json.ts";
 
 describe("updatePackageJson - TypeScript", () => {
   test("adds build script pointing to npx tsc", () => {

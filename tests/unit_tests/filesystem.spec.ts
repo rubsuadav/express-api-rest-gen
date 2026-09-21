@@ -5,7 +5,7 @@ import path from "path";
 import os from "os";
 
 // local imports
-import { checkProjectExists } from "../../utils/filesystem.ts";
+import { checkProjectExists } from "../../src/utils/filesystem.ts";
 
 describe("checkProjectExists", () => {
   test("returns true when the project path already exists", () => {

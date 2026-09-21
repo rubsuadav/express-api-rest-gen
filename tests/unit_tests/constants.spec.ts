@@ -11,7 +11,7 @@ import {
   TEST_DEPENDENCIES,
   TEST_TS_DEPENDENCIES,
   TEST_CONFIG,
-} from "../../utils/constants.ts";
+} from "../../src/utils/constants.ts";
 
 describe("FOLDERS", () => {
   test("is an array", () => {
@@ -53,7 +53,10 @@ describe("FOLDERS", () => {
   test("all entries are strings starting with src/", () => {
     for (const folder of FOLDERS) {
       ok(typeof folder === "string");
-      ok(folder.startsWith("src/"), `Expected "${folder}" to start with "src/"`);
+      ok(
+        folder.startsWith("src/"),
+        `Expected "${folder}" to start with "src/"`,
+      );
     }
   });
 });

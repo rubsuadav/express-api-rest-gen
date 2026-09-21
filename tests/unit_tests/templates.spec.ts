@@ -7,7 +7,7 @@ import {
   getIndexTemplate,
   getMongoDBTemplate,
   getSQLTemplate,
-} from "../../utils/templates.ts";
+} from "../../src/utils/templates.ts";
 
 describe("getAppTemplate", () => {
   test("returns a string", () => {
