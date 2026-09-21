@@ -7,8 +7,8 @@
     "module": "nodenext",
     "target": "es6",
     "moduleResolution": "nodenext",
-    "allowImportingTsExtensions": true,          /* Allows imports ending in .ts for direct TypeScript execution in tests */
-    "rewriteRelativeImportExtensions": true,     /* Rewrites relative .ts imports to .js when emitting build artifacts */
+    "allowImportingTsExtensions": true /* Allows imports ending in .ts for direct TypeScript execution in tests */,
+    "rewriteRelativeImportExtensions": true /* Rewrites relative .ts imports to .js when emitting build artifacts */,
     "types": ["node"],
     "sourceMap": true,
     "declaration": true,
