@@ -114,8 +114,8 @@ describe("TS_DEPENDENCIES", () => {
     ok(TS_DEPENDENCIES.includes("typescript"));
   });
 
-  test("contains ts-node", () => {
-    ok(TS_DEPENDENCIES.includes("ts-node"));
+  test("contains tsx", () => {
+    ok(TS_DEPENDENCIES.includes("tsx"));
   });
 
   test("contains @types/node", () => {

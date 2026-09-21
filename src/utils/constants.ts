@@ -12,7 +12,7 @@ export const BASE_DEPENDENCIES: string[] = ["express", "cors", "dotenv"];
 export const DEV_DEPENDENCIES: string[] = ["morgan", "nodemon"];
 export const TS_DEPENDENCIES: string[] = [
   "typescript",
-  "ts-node",
+  "tsx",
   "@types/node",
   "@types/express",
   "@types/cors",

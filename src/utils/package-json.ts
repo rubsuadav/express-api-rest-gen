@@ -6,7 +6,7 @@ export function updatePackageJson(pkg: any, language: string): any {
       ...pkg.scripts,
       build: "npx tsc",
       start: "npm run build && node build/src/index.js",
-      dev: "set NODE_ENV=development && nodemon src/index.ts",
+      dev: 'nodemon --exec "set NODE_ENV=development && tsx" src/index.ts',
     };
   } else {
     pkg.scripts = {
